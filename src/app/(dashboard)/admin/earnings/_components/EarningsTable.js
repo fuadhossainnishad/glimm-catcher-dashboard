@@ -17,8 +17,6 @@ import getTagColor from "@/utils/getTagColor";
 export default function EarningsTable() {
   const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
 
-  
-  
   // =============== Table Data =================
   const data = Array.from({ length: 20 }).map((_) => ({
     id: "INV0938",
@@ -31,10 +29,9 @@ export default function EarningsTable() {
     tnxId: "454842343454",
     date: "Aug, 15 2023 02:29 PM",
   }));
-  
 
   // =============== Table columns ===============
-   const columns = [
+  const columns = [
     {
       title: "Invoice Id",
       dataIndex: "id",
@@ -108,7 +105,7 @@ export default function EarningsTable() {
         </Tag>
       ),
     },
-    
+
     {
       title: "Date",
       dataIndex: "date",
@@ -117,7 +114,11 @@ export default function EarningsTable() {
     {
       title: "Action",
       render: () => {
-        return <Button style={{backgroundColor: "var(--primary-yellow)",}}>View Details</Button>;
+        return (
+          <Button style={{ backgroundColor: "var(--primary-yellow)" }}>
+            View Details
+          </Button>
+        );
       },
     },
   ];
@@ -143,9 +144,8 @@ export default function EarningsTable() {
             justify="start"
             gap={14}
             align="center"
-            className="w-full rounded-lg  px-4 py-3.5 text-white "
-            style={{backgroundImage: "var(--primary-gradient)"}}
-
+            className="w-full rounded-lg px-4 py-3.5 text-white"
+            style={{ backgroundImage: "var(--primary-gradient)" }}
           >
             <Icon icon="ph:arrows-left-right-fill" width="23px" height="23px" />
 
@@ -161,7 +161,7 @@ export default function EarningsTable() {
             justify="start"
             gap={14}
             align="center"
-            className="w-full rounded-lg px-4 py-3.5 text-white bg-secondary"
+            className="w-full rounded-lg bg-secondary px-4 py-3.5 text-white"
             // style={{backgroundImage: "var(--primary-gradient)"}}
           >
             <Icon icon="ph:arrows-left-right-fill" width="23px" height="23px" />

@@ -15,14 +15,23 @@ export default function LoginForm() {
   const router = useRouter();
 
   const onLoginSubmit = async (data) => {
-    console.log(data);
-    const loginRes = await login(data);
-    console.log("loginRes:",loginRes);
+    console.log("loginData:", data);
 
-    if (!loginRes.data.success) {
-      alert("Login failed");
+    try {
+      const loginRes = await login(data);
+      console.log("loginRes:", loginRes);
+
+      if (!loginRes.success) {
+        alert("Login failed");
+        return;
+      }
+      router.push("/admin/dashboard");
+    } catch (error) {
+      console.error(error);
+      alert(
+        "Login failed: " + (error.response?.data?.message || error.message),
+      );
     }
-    router.push("/admin/dashboard");
   };
 
   return (

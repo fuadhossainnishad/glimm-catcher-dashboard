@@ -7,17 +7,37 @@ import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import { Button } from "antd";
 import { ArrowLeft } from "lucide-react";
+import { forgotPassword } from "@/features/auth/auth";
+import { useRouter } from "next/navigation";
 
 export default function ForgotPassForm() {
-  const onSubmit = (data) => {
-    console.log(data);
+  const router = useRouter();
+
+  const onSubmit = async (data) => {
+    console.log("loginData:", data);
+
+    try {
+      const loginRes = await forgotPassword(data);
+      console.log("loginRes:", loginRes);
+
+      if (!loginRes.success) {
+        alert("otp not arrived");
+        return;
+      }
+      router.push("/otp-verification");
+    } catch (error) {
+      console.error(error);
+      alert(
+        "Login failed: " + (error.response?.data?.message || error.message),
+      );
+    }
   };
 
   return (
-    <div className="px-6 py-8 w-full">
+    <div className="w-full px-6 py-8">
       <Link
         href="/login"
-        className="text-primary-blue flex-center-start gap-x-2 font-medium hover:text-primary-blue/85 mb-4"
+        className="text-primary-blue flex-center-start hover:text-primary-blue/85 mb-4 gap-x-2 font-medium"
       >
         <ArrowLeft size={18} /> Back to login
       </Link>
@@ -42,8 +62,7 @@ export default function ForgotPassForm() {
         <Button
           type="primary"
           size="large"
-          className="w-full !font-semibold !h-10"
-        
+          className="!h-10 w-full !font-semibold"
         >
           Submit
         </Button>
