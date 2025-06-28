@@ -13,9 +13,11 @@ import { Image } from "antd";
 import { formatString } from "@/utils/formatString";
 import { useState } from "react";
 import getTagColor from "@/utils/getTagColor";
+import { handleSearch } from "@/lib/handleSearch";
 
 export default function EarningsTable() {
   const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
+  const [searchText, setSearchText] = useState("");
 
   // =============== Table Data =================
   const data = Array.from({ length: 20 }).map((_) => ({
@@ -29,6 +31,12 @@ export default function EarningsTable() {
     tnxId: "454842343454",
     date: "Aug, 15 2023 02:29 PM",
   }));
+
+  const handleSearchTransaction = handleSearch(data, searchText, [
+    "paidBy.name",
+    "status",
+    "amount",
+  ]);
 
   // =============== Table columns ===============
   const columns = [
@@ -129,7 +137,8 @@ export default function EarningsTable() {
 
         <Search
           placeholder="Search Earnings..."
-          onSearch={(value) => console.log(value)}
+          onSearch={(e) => setSearchText(e)}
+          onChange={(e) => setSearchText(e.target.value)}
           size="large"
           style={{
             width: 300,
@@ -188,7 +197,7 @@ export default function EarningsTable() {
         <Table
           style={{ overflowX: "auto" }}
           columns={columns}
-          dataSource={data}
+          dataSource={handleSearchTransaction}
           scroll={{ x: "100%" }}
           className="notranslate"
           pagination={{

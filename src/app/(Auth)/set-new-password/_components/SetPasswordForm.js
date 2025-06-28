@@ -2,6 +2,7 @@
 
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
+import { changePassword } from "@/features/auth/auth";
 import { resetPassSchema } from "@/schema/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
@@ -10,8 +11,25 @@ import Link from "next/link";
 import React from "react";
 
 export default function SetPasswordForm() {
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    console.log("data:", data);
+
+    try {
+      const res = await changePassword(data);
+      console.log("res:", res);
+
+      if (res.success) {
+        alert("password not changed");
+        return;
+      }
+      router.push("/admin/dashboard");
+    } catch (error) {
+      console.error(error);
+      alert(
+        "Otp verify failed: " +
+          (error.response?.data?.message || error.message),
+      );
+    }
   };
 
   return (
@@ -48,6 +66,7 @@ export default function SetPasswordForm() {
         />
 
         <Button
+          htmlType="submit"
           type="primary"
           size="large"
           className="!h-10 w-full !font-semibold"

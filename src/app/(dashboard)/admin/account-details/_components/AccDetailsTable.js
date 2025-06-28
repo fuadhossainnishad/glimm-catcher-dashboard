@@ -16,6 +16,7 @@ import ProfileModal from "@/components/SharedModals/ProfileModal";
 import { Tag } from "antd";
 import getTagColor from "@/utils/getTagColor";
 import { Icon } from "@iconify/react";
+import { handleSearch } from "@/lib/handleSearch";
 
 // Dummy table Data
 const data = Array.from({ length: 10 }).map((_, inx) => ({
@@ -25,8 +26,7 @@ const data = Array.from({ length: 10 }).map((_, inx) => ({
   email: "soumaya@gmail.com",
   contact: "+1 (234) 567-890",
   date: "Oct 24 2024, 11:10 PM",
-  gender:
-    inx % 2 === 0 ? "Female": "Male",
+  gender: inx % 2 === 0 ? "Female" : "Male",
 }));
 
 export default function AccDetailsTable() {
@@ -37,6 +37,12 @@ export default function AccDetailsTable() {
   const handleBlockUser = () => {
     message.success("User blocked successfully");
   };
+
+  const handleSearchUser = handleSearch(data, searchText, [
+    "name",
+    "email",
+    "gender",
+  ]);
 
   // ================== Table Columns ================
   const columns = [
@@ -55,7 +61,7 @@ export default function AccDetailsTable() {
             alt="User avatar"
             width={1200}
             height={1200}
-            className="rounded-full w-10 h-auto aspect-square"
+            className="aspect-square h-auto w-10 rounded-full"
           />
           <p className="font-medium">{value}</p>
         </div>
@@ -75,7 +81,7 @@ export default function AccDetailsTable() {
     },
     {
       title: "Gender",
-      dataIndex: "gender"
+      dataIndex: "gender",
     },
     {
       title: "Action",
@@ -112,11 +118,11 @@ export default function AccDetailsTable() {
         },
       }}
     >
-      <div className="w-1/3 ml-auto gap-x-5 mb-3">
+      <div className="mb-3 ml-auto w-1/3 gap-x-5">
         <Input
           placeholder="Search by name or email"
           prefix={<Search className="mr-2 text-black" size={20} />}
-          className="h-11 !border !rounded-lg !text-base"
+          className="h-11 !rounded-lg !border !text-base"
           onChange={(e) => setSearchText(e.target.value)}
         />
       </div>
@@ -124,7 +130,7 @@ export default function AccDetailsTable() {
       <Table
         style={{ overflowX: "auto" }}
         columns={columns}
-        dataSource={data}
+        dataSource={handleSearchUser}
         scroll={{ x: "100%" }}
       ></Table>
 

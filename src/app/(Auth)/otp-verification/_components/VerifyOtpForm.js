@@ -2,6 +2,7 @@
 
 import FormWrapper from "@/components/Form/FormWrapper";
 import UOtpInput from "@/components/Form/UOtpInput";
+import { otpVerify } from "@/features/auth/auth";
 import { otpSchema } from "@/schema/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
@@ -10,8 +11,25 @@ import Link from "next/link";
 import React from "react";
 
 export default function VerifyOtpForm() {
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    console.log("data:", data);
+
+    try {
+      const res = await otpVerify(data);
+      console.log("res:", res);
+
+      if (!res.success) {
+        alert("otp not matched");
+        return;
+      }
+      router.push("/set-new-password");
+    } catch (error) {
+      console.error(error);
+      alert(
+        "Otp verify failed: " +
+          (error.response?.data?.message || error.message),
+      );
+    }
   };
 
   return (
@@ -34,6 +52,7 @@ export default function VerifyOtpForm() {
         <UOtpInput name="otp" />
 
         <Button
+          htmlType="submit"
           type="primary"
           size="large"
           className="!h-10 w-full !font-semibold"

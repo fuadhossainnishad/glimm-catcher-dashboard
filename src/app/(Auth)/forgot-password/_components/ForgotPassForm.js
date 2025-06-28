@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPassSchema, loginSchema } from "@/schema/authSchema";
+import { forgotPassSchema } from "@/schema/authSchema";
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import { Button } from "antd";
@@ -17,18 +17,17 @@ export default function ForgotPassForm() {
     console.log("loginData:", data);
 
     try {
-      const loginRes = await forgotPassword(data);
-      console.log("loginRes:", loginRes);
-
-      if (!loginRes.success) {
+      const res = await forgotPassword(data);
+      console.log("res:", res);
+      router.push("/otp-verification");
+      if (!res.success) {
         alert("otp not arrived");
         return;
       }
-      router.push("/otp-verification");
     } catch (error) {
       console.error(error);
       alert(
-        "Login failed: " + (error.response?.data?.message || error.message),
+        "Otp sent failed: " + (error.response?.data?.message || error.message),
       );
     }
   };
@@ -60,6 +59,7 @@ export default function ForgotPassForm() {
         />
 
         <Button
+          htmlType="submit"
           type="primary"
           size="large"
           className="!h-10 w-full !font-semibold"

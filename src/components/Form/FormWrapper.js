@@ -27,6 +27,7 @@ export default function FormWrapper({
   }, [defaultValues, methods]);
 
   const handleSubmit = (data) => {
+    console.log("submit function");
     onSubmit(data);
     methods.reset();
   };

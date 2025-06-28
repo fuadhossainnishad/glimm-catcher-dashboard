@@ -39,6 +39,42 @@ export const login = async ({ email, password }) => {
 export const forgotPassword = async ({ email }) => {
   console.log({ email });
 
-  const res = await axiosInstance.post("/otp/forgot-password", { email });
+  const res = await axiosInstance.post(
+    "/otp/forgot-password",
+    { email },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  return res.data;
+};
+
+export const otpVerify = async ({ otp }) => {
+  console.log({ otp });
+  const token = sessionStorage.getItem("token");
+  console.log({ token });
+  const res = await axiosInstance.post(
+    "/otp/forgot-password/verify",
+    { otp },
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
+  return res.data;
+};
+
+export const changePassword = async (data) => {
+  console.log({ otp });
+  const token = sessionStorage.getItem("token");
+  console.log({ token });
+  const res = await axiosInstance.post("/auth/change-password", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
   return res.data;
 };
