@@ -25,7 +25,7 @@ export const login = async ({ email, password }) => {
   console.log({ email, password });
 
   const res = await axiosInstance.post(
-    "/auth/login",
+    "/admin/login",
     { email, password },
     {
       headers: {
@@ -48,7 +48,7 @@ export const forgotPassword = async ({ email }) => {
       },
     },
   );
-  return res.data;
+  return res;
 };
 
 export const otpVerify = async ({ otp }) => {
@@ -64,7 +64,7 @@ export const otpVerify = async ({ otp }) => {
       },
     },
   );
-  return res.data;
+  return res;
 };
 
 export const changePassword = async (data) => {
@@ -76,5 +76,5 @@ export const changePassword = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res.data;
+  return res;
 };

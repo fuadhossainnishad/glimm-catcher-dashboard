@@ -2,7 +2,7 @@
 
 import FormWrapper from "@/components/Form/FormWrapper";
 import UOtpInput from "@/components/Form/UOtpInput";
-import { otpVerify } from "@/features/auth/auth";
+import { otpVerify } from "@/features/auth";
 import { otpSchema } from "@/schema/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";

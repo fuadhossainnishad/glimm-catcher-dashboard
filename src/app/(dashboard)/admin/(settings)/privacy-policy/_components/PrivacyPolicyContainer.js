@@ -8,7 +8,7 @@ import { Edit } from "lucide-react";
 export default function PrivacyPolicyContainer() {
   return (
     <section>
-      <h3 className="text-2xl font-semibold mb-6">Privacy Policy</h3>
+      <h3 className="mb-6 text-2xl font-semibold">Privacy Policy</h3>
 
       <FormWrapper>
         <UTextEditor

@@ -7,7 +7,7 @@ import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import { Button } from "antd";
 import { ArrowLeft } from "lucide-react";
-import { forgotPassword } from "@/features/auth/auth";
+import { forgotPassword } from "@/features/auth";
 import { useRouter } from "next/navigation";
 
 export default function ForgotPassForm() {

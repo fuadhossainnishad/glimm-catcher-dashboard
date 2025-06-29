@@ -2,7 +2,7 @@
 
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
-import { changePassword } from "@/features/auth/auth";
+import { changePassword } from "@/features/auth";
 import { resetPassSchema } from "@/schema/authSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";

@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 import userImage from "@/assets/images/user-avatar-lg.png";
 import { Eye } from "lucide-react";
 import { UserX } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Filter } from "lucide-react";
 import Image from "next/image";
 import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
@@ -17,32 +17,51 @@ import { Tag } from "antd";
 import getTagColor from "@/utils/getTagColor";
 import { Icon } from "@iconify/react";
 import { handleSearch } from "@/lib/handleSearch";
+import { getAllUser } from "@/features/user";
 
 // Dummy table Data
-const data = Array.from({ length: 10 }).map((_, inx) => ({
-  key: inx + 1,
-  name: "Soumaya",
-  userImg: userImage,
-  email: "soumaya@gmail.com",
-  contact: "+1 (234) 567-890",
-  date: "Oct 24 2024, 11:10 PM",
-  gender: inx % 2 === 0 ? "Female" : "Male",
-}));
+const data = async (userData) => {
+  return userData.map((user, inx) => ({
+    key: inx + 1,
+    name: user.fullName,
+    userImg: user.userImage || userImage,
+    email: user.email,
+    contact: `${user.countryCode} ${user.phoneNumber}`,
+    date: user.createdAt,
+    gender: user.gender || "female",
+    location: user.location,
+  }));
+};
 
 export default function AccDetailsTable() {
   const [searchText, setSearchText] = useState("");
   const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [userData, setUserData] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   // Block user handler
   const handleBlockUser = () => {
     message.success("User blocked successfully");
   };
 
-  const handleSearchUser = handleSearch(data, searchText, [
+  const handleSearchUser = handleSearch(userData, searchText, [
     "name",
     "email",
     "gender",
   ]);
+
+  const handleUserProfile = async () => {
+    const res = await getAllUser();
+    if (!res.success) {
+      message.error("Failed to fetch users");
+    }
+    const transform = await data(res.data.data);
+    setUserData(transform);
+  };
+
+  useEffect(() => {
+    handleUserProfile();
+  }, []);
 
   // ================== Table Columns ================
   const columns = [
@@ -85,10 +104,15 @@ export default function AccDetailsTable() {
     },
     {
       title: "Action",
-      render: () => (
+      render: (_, record) => (
         <div className="flex-center-start gap-x-3">
           <Tooltip title="Show Details">
-            <button onClick={() => setProfileModalOpen(true)}>
+            <button
+              onClick={() => {
+                setProfileModalOpen(true);
+                setSelectedUser(record);
+              }}
+            >
               <Eye color="#1B70A6" size={22} />
             </button>
           </Tooltip>
@@ -134,7 +158,11 @@ export default function AccDetailsTable() {
         scroll={{ x: "100%" }}
       ></Table>
 
-      <ProfileModal open={profileModalOpen} setOpen={setProfileModalOpen} />
+      <ProfileModal
+        open={profileModalOpen}
+        setOpen={setProfileModalOpen}
+        user={selectedUser}
+      />
     </ConfigProvider>
   );
 }

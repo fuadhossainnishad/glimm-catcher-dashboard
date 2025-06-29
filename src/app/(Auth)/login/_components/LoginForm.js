@@ -9,7 +9,7 @@ import { Button } from "antd";
 import { useRouter } from "next/navigation";
 import logo from "@/assets/logos/logo.svg";
 import Image from "next/image";
-import { login } from "@/features/auth/auth";
+import { login } from "@/features/auth";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -19,12 +19,14 @@ export default function LoginForm() {
 
     try {
       const loginRes = await login(data);
-      console.log("loginRes:", loginRes);
+      console.log("loginRes:", loginRes.data.admin);
 
       if (!loginRes.success) {
         alert("Login failed");
         return;
       }
+      console.log("loginRes:", loginRes.data.token);
+      sessionStorage.setItem("token", loginRes.data.token);
       router.push("/admin/dashboard");
     } catch (error) {
       console.error(error);
