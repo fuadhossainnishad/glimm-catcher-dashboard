@@ -2,19 +2,20 @@
 
 import { Button, Flex } from "antd";
 import { PlusCircle } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddSubscriptionModal from "./AddSubscriptionModal";
 import EditSubscriptionModal from "./EditSubscriptionModal";
 import Subscriptions from "../page";
 import SubscriptionCard from "./SubscriptionCard";
+import { getSubscribe } from "@/features/subscription";
 
 // Static Data
 const SUBSCRIPTIONS = [
   {
-    key: "monthly",
-    slogan: "Unlock the most powerful AI research assistant",
+    billingCycle: "monthly",
+    shortDescription: "Unlock the most powerful AI research assistant",
     title: "Monthly",
-    cost: "20",
+    price: "20",
     features: [
       "Unlock AI Generated Images",
       "Pro support from our team",
@@ -22,10 +23,10 @@ const SUBSCRIPTIONS = [
     ],
   },
   {
-    key: "yearly",
-    slogan: "Unlock the most powerful AI research assistant",
+    billingCycle: "yearly",
+    shortDescription: "Unlock the most powerful AI research assistant",
     title: "Yearly",
-    cost: "40",
+    price: "40",
     features: [
       "Unlock AI Generated Images",
       "Pro support from our team",
@@ -39,6 +40,29 @@ export default function SubscriptionContainer() {
     useState(false);
   const [showEditSubscriptionModal, setShowEditSubscriptionModal] =
     useState(false);
+  const [subscription, setSubcsription] = useState([]);
+
+  const handleSubscription = async () => {
+    try {
+      const res = await getSubscribe();
+      if (!res.success) {
+        alert("No subscription created yet");
+        return;
+      }
+      console.log("loginRes:", res.data);
+      setSubcsription(res.data);
+    } catch (error) {
+      console.error(error);
+      alert(
+        "Get subscription extract failed: " +
+          (error.response?.data?.message || error.message),
+      );
+    }
+  };
+
+  useEffect(() => {
+    handleSubscription();
+  }, []);
 
   return (
     <div>

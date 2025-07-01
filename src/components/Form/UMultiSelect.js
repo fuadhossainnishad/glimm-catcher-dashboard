@@ -45,6 +45,7 @@ export default function UMultiSelect({
             options={options}
             disabled={disabled}
             open={showDropdown}
+            value={fieldValue}
           />
         </Form.Item>
       )}

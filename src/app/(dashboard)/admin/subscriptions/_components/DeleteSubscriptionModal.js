@@ -2,23 +2,27 @@ import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import UMultiSelect from "@/components/Form/UMultiSelect";
 import USelect from "@/components/Form/USelect";
-import { createSubscribe } from "@/features/subscription";
+import { createSubscribe, updateSubscribe } from "@/features/subscription";
 import { createSubscriptionSchema } from "@/schema/subscriptionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Modal } from "antd";
 import React from "react";
 
-export default function AddSubscriptionModal({ open, setOpen }) {
+export default function DeleteSubscriptionModal({
+  open,
+  setOpen,
+  subscriptionDeatils,
+}) {
   const onSubmit = async (data) => {
     console.log(data);
-    const res = await createSubscribe(data);
+    const res = await updateSubscribe(data);
     console.log("sunscription:", res.data);
 
     if (!res.data.success) {
-      alert("No subscription created yet");
+      alert("Subscription not updated yet");
       return;
     }
-    alert("Subscription plan created successfully");
+    alert("Subscription plan updated successfully");
     console.log("sunscription:", res.data);
   };
 
@@ -28,11 +32,20 @@ export default function AddSubscriptionModal({ open, setOpen }) {
       onCancel={() => setOpen(false)}
       footer={null}
       centered
-      title="Create new subscription plan"
+      title="Edit subscription plan"
     >
       <FormWrapper
         onSubmit={onSubmit}
         resolver={zodResolver(createSubscriptionSchema)}
+        defaultValues={{
+          title: subscriptionDeatils.title,
+          shortDescription: subscriptionDeatils.shortDescription,
+          price: subscriptionDeatils.price,
+          billingCycle: subscriptionDeatils.billingCycle,
+          features: Array.isArray(subscriptionDeatils.features)
+            ? subscriptionDeatils.features
+            : [],
+        }}
       >
         <UInput
           name="title"

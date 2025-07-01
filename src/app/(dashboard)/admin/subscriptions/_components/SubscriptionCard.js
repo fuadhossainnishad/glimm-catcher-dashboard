@@ -1,18 +1,27 @@
+"use client";
+
 import { Button } from "antd";
 import { Check } from "lucide-react";
+import { useState } from "react";
+import EditSubscriptionModal from "./EditSubscriptionModal";
 
 export default function SubscriptionCard({ subscription }) {
+  const [showEditSubscriptionModal, setShowEditSubscriptionModal] =
+    useState(false);
+  const [editSubscription, setEditSubscription] = useState(subscription);
   return (
     <div className="flex flex-col justify-between rounded-xl border bg-white p-4 transition-all hover:shadow-lg">
       <div className="space-y-4">
         <div className="space-y-2">
-          <p className="text-lg text-gray-600">{subscription.slogan}</p>
+          <p className="text-lg text-gray-600">
+            {subscription.shortDescription}
+          </p>
           <div className="space-y-1">
             <h3 className="text-2xl font-medium tracking-tight">
               {subscription.title}
             </h3>
             <div className="flex items-baseline">
-              <span className="text-4xl font-bold">${subscription.cost}</span>
+              <span className="text-4xl font-bold">${subscription.price}</span>
               <span className="text-gray-600">.00</span>
             </div>
           </div>
@@ -31,13 +40,24 @@ export default function SubscriptionCard({ subscription }) {
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-4">
-        <Button type="primary" className="w-full">
+        <Button
+          type="primary"
+          className="w-full"
+          onClick={() => {
+            setShowEditSubscriptionModal(true);
+          }}
+        >
           Edit
         </Button>
         <Button style={{ backgroundColor: "var(--danger)", color: "white" }}>
           Delete
         </Button>
       </div>
+      <EditSubscriptionModal
+        open={showEditSubscriptionModal}
+        setOpen={setShowEditSubscriptionModal}
+        subscriptionDeatils={editSubscription}
+      />
     </div>
   );
 }
