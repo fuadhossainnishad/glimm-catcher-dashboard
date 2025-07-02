@@ -18,6 +18,7 @@ import { handleSearch } from "@/lib/handleSearch";
 export default function EarningsTable() {
   const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
   const [searchText, setSearchText] = useState("");
+  const [earnings, setEarnings] = useState([]);
 
   // =============== Table Data =================
   const data = Array.from({ length: 20 }).map((_) => ({

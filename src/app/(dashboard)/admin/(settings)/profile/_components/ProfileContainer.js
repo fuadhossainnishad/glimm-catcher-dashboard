@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import adminImg from "@/assets/images/user-avatar-md.png";
 import { ImagePlus } from "lucide-react";
@@ -5,18 +6,35 @@ import { ConfigProvider } from "antd";
 import ChangePassForm from "./ChangePassForm";
 import EditProfileForm from "./EditProfileForm";
 import { Tabs } from "antd";
+import { useEffect, useState } from "react";
+import { getAdminProfile } from "@/features/admin";
 
 export default function ProfileContainer() {
+  const [profile, setprofile] = useState({});
+
+  const profileHandler = async () => {
+    const res = await getAdminProfile();
+    if (!res.success) {
+      alert("Fetch admin prfile failed");
+      return;
+    }
+    console.log("Admin profile:", res);
+    setprofile(res);
+  };
+
+  useEffect(() => {
+    profileHandler();
+  }, []);
   const tabItems = [
     {
       key: "editProfile",
       label: "Edit Profile",
-      children: <EditProfileForm />,
+      children: <EditProfileForm profile={profile} />,
     },
     {
       key: "changePassword",
       label: "Change Password",
-      children: <ChangePassForm />,
+      children: <ChangePassForm profile={profile} />,
     },
   ];
 
@@ -27,7 +45,7 @@ export default function ProfileContainer() {
         <section className="flex-center gap-x-3">
           <div className="relative w-max">
             <Image
-              src={adminImg}
+              src={profile.image || adminImg}
               alt="Admin avatar"
               width={1200}
               height={1200}

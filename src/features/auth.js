@@ -1,4 +1,5 @@
 import axiosInstance from "@/lib/axios";
+import { cookies } from "next/headers";
 
 // export const signup = async (
 //   fullName,
@@ -33,6 +34,12 @@ export const login = async ({ email, password }) => {
       },
     },
   );
+  (await cookies()).set("token", res.data.token, {
+    httpOnly: true,
+    secure: true,
+    sameSize: "strict",
+    path: "/",
+  });
   return res.data;
 };
 
@@ -40,7 +47,7 @@ export const forgotPassword = async ({ email }) => {
   console.log({ email });
 
   const res = await axiosInstance.post(
-    "/otp/forgot-password",
+    "/admin/forgot-password",
     { email },
     {
       headers: {
@@ -56,7 +63,7 @@ export const otpVerify = async ({ otp }) => {
   const token = sessionStorage.getItem("token");
   console.log({ token });
   const res = await axiosInstance.post(
-    "/otp/forgot-password/verify",
+    "/admin/verify-otp",
     { otp },
     {
       headers: {

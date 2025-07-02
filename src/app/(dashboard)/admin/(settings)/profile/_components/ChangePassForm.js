@@ -1,14 +1,21 @@
-"use client";
-
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
+import { changeAdminPassword } from "@/features/admin";
 import { changePasswordSchema } from "@/schema/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
+import { useState } from "react";
 
-export default function ChangePassForm() {
-  const handleSubmit = (data) => {
+export default function ChangePassForm({ profile }) {
+  const handleSubmit = async (data) => {
     console.log(data);
+
+    const res = await changeAdminPassword({ id: profile?.id, ...data });
+    if (!res.success) {
+      alert("Changing admin password failed");
+      return;
+    }
+    console.log(res);
   };
 
   return (
@@ -16,6 +23,12 @@ export default function ChangePassForm() {
       <FormWrapper
         onSubmit={handleSubmit}
         resolver={zodResolver(changePasswordSchema)}
+        defaultValues={{
+          id: profile?.id,
+          oldPassword: profile?.oldPassword || "eufguysdgsfghfgh",
+          newPassword: profile?.newPassword || "eufguysdgsfghfgh",
+          confirmPassword: profile?.confirmPassword || "eufguysdgsfghfgh",
+        }}
       >
         <UInput
           name="oldPassword"

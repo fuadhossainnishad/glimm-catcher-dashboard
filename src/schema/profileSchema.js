@@ -10,6 +10,7 @@ export const editProfileSchema = z.object({
   contact: z
     .string({ required_error: "Contact is required" })
     .min(1, { message: "Contact is required" }),
+  photo: z.string({ required_error: "Photo is required" }).optional(),
 });
 
 export const changePasswordSchema = z.object({

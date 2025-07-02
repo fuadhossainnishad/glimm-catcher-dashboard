@@ -17,18 +17,19 @@ import { Tag } from "antd";
 import getTagColor from "@/utils/getTagColor";
 import { Icon } from "@iconify/react";
 import { handleSearch } from "@/lib/handleSearch";
-import { getAllUser } from "@/features/user";
+import { deleteUser, getAllUser } from "@/features/user";
+import { formateDate } from "@/utils/formateDate";
 
-// Dummy table Data
 const data = async (userData) => {
   return userData.map((user, inx) => ({
     key: inx + 1,
+    id: user.id,
     name: user.fullName,
     userImg: user.userImage || userImage,
     email: user.email,
     contact: `${user.countryCode} ${user.phoneNumber}`,
-    date: user.createdAt,
-    gender: user.gender || "female",
+    date: formateDate(user.createdAt),
+    gender: user.gender,
     location: user.location,
   }));
 };
@@ -40,7 +41,8 @@ export default function AccDetailsTable() {
   const [selectedUser, setSelectedUser] = useState(null);
 
   // Block user handler
-  const handleBlockUser = () => {
+  const handleBlockUser = async (userId) => {
+    const res = await deleteUser(userid);
     message.success("User blocked successfully");
   };
 
@@ -121,7 +123,7 @@ export default function AccDetailsTable() {
             <CustomConfirm
               title="Block User"
               description="Are you sure to block this user?"
-              onConfirm={handleBlockUser}
+              onConfirm={() => handleBlockUser(record.id)}
             >
               <button>
                 <UserX color="#F16365" size={22} />

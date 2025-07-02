@@ -2,13 +2,20 @@
 
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
+import { updateAdminProfile } from "@/features/admin";
 import { editProfileSchema } from "@/schema/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
+import { useState } from "react";
 
-export default function EditProfileForm() {
-  const handleSubmit = (data) => {
-    console.log(data);
+export default function EditProfileForm({ profile }) {
+  const handleSubmit = async (data) => {
+    const res = await updateAdminProfile({ id: profile?.id, ...data });
+    if (!res.success) {
+      alert("Profile updated failed");
+      return;
+    }
+    console.log(res);
   };
 
   return (
@@ -17,9 +24,10 @@ export default function EditProfileForm() {
         onSubmit={handleSubmit}
         resolver={zodResolver(editProfileSchema)}
         defaultValues={{
-          name: "Glimm Catcher",
-          email: "glimm-catcher@gmail.com",
-          contact: "+1234567890",
+          id: profile?.id,
+          name: profile?.name || "Glimm Catcher",
+          email: profile?.email || "glimm-catcher@gmail.com",
+          contact: profile?.contact || "+1234567890",
         }}
       >
         <UInput
