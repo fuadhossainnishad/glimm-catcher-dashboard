@@ -2,17 +2,21 @@ import axiosInstance from "@/lib/axios";
 
 export const createSubscribe = async (data) => {
   const token = sessionStorage.getItem("token");
-  const res = await axiosInstance.post("/users", data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
+  const res = await axiosInstance.post(
+    "/subscription/create-subscription",
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     },
-  });
+  );
   return res;
 };
 
 export const getSubscribe = async (data) => {
   const token = sessionStorage.getItem("token");
-  const res = await axiosInstance.get("/users", data, {
+  const res = await axiosInstance.get("/subscription", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -22,17 +26,21 @@ export const getSubscribe = async (data) => {
 
 export const getAllSubscribe = async () => {
   const token = sessionStorage.getItem("token");
-  const res = await axiosInstance.get("/users", {
+  const res = await axiosInstance.get("/subscription", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res;
+  console.log("loginRes:", res.data);
+
+  return res.data;
 };
 
 export const updateSubscribe = async (data) => {
+  console.log("updateSubscribe:", data);
+
   const token = sessionStorage.getItem("token");
-  const res = await axiosInstance.patch("/users", data, {
+  const res = await axiosInstance.patch(`/subscription/${data.id}`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -41,8 +49,10 @@ export const updateSubscribe = async (data) => {
 };
 
 export const deleteSubscribe = async (data) => {
+  console.log("deleteSubscribe:", data);
+
   const token = sessionStorage.getItem("token");
-  const res = await axiosInstance.delete("/users", data, {
+  const res = await axiosInstance.delete(`/subscription/${data}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

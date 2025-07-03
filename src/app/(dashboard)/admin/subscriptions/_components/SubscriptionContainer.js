@@ -4,36 +4,12 @@ import { Button, Flex } from "antd";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import AddSubscriptionModal from "./AddSubscriptionModal";
-import EditSubscriptionModal from "./EditSubscriptionModal";
-import Subscriptions from "../page";
 import SubscriptionCard from "./SubscriptionCard";
-import { getSubscribe } from "@/features/subscription";
-
-// Static Data
-const SUBSCRIPTIONS = [
-  {
-    billingCycle: "monthly",
-    shortDescription: "Unlock the most powerful AI research assistant",
-    title: "Monthly",
-    price: "20",
-    features: [
-      "Unlock AI Generated Images",
-      "Pro support from our team",
-      "Early access to new features",
-    ],
-  },
-  {
-    billingCycle: "yearly",
-    shortDescription: "Unlock the most powerful AI research assistant",
-    title: "Yearly",
-    price: "40",
-    features: [
-      "Unlock AI Generated Images",
-      "Pro support from our team",
-      "Early access to new features",
-    ],
-  },
-];
+import {
+  deleteSubscribe,
+  getAllSubscribe,
+  getSubscribe,
+} from "@/features/subscription";
 
 export default function SubscriptionContainer() {
   const [showAddSubscriptionModal, setShowAddSubscriptionModal] =
@@ -44,7 +20,9 @@ export default function SubscriptionContainer() {
 
   const handleSubscription = async () => {
     try {
-      const res = await getSubscribe();
+      const res = await getAllSubscribe();
+      console.log("loginRes:", res.data);
+
       if (!res.success) {
         alert("No subscription created yet");
         return;
@@ -58,6 +36,15 @@ export default function SubscriptionContainer() {
           (error.response?.data?.message || error.message),
       );
     }
+  };
+
+  const handleDeleteSubscription = async (data) => {
+    const res = await deleteSubscribe(data);
+    if (!res.success) {
+      message.error("Failed to fetch users");
+    }
+    message.success("User blocked successfully");
+    await handleSubscription();
   };
 
   useEffect(() => {
@@ -82,10 +69,12 @@ export default function SubscriptionContainer() {
       </Flex>
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-        {SUBSCRIPTIONS.map((subscription) => (
+        {subscription.map((subscription) => (
           <SubscriptionCard
-            key={subscription.key}
+            key={subscription._id}
             subscription={subscription}
+            onUpdated={handleSubscription}
+            onConfirm={() => handleDeleteSubscription(subscription)}
           />
         ))}
       </div>
@@ -94,6 +83,7 @@ export default function SubscriptionContainer() {
       <AddSubscriptionModal
         open={showAddSubscriptionModal}
         setOpen={setShowAddSubscriptionModal}
+        onCreated={handleSubscription}
       />
       {/* <EditSubscriptionModal
         open={showEditSubscriptionModal}

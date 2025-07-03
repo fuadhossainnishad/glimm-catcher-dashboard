@@ -4,11 +4,19 @@ import { Button } from "antd";
 import { Check } from "lucide-react";
 import { useState } from "react";
 import EditSubscriptionModal from "./EditSubscriptionModal";
+import { Tooltip } from "antd";
+import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
+import { deleteSubscribe } from "@/features/subscription";
 
-export default function SubscriptionCard({ subscription }) {
+export default function SubscriptionCard({
+  subscription,
+  onUpdated,
+  onConfirm,
+}) {
   const [showEditSubscriptionModal, setShowEditSubscriptionModal] =
     useState(false);
   const [editSubscription, setEditSubscription] = useState(subscription);
+
   return (
     <div className="flex flex-col justify-between rounded-xl border bg-white p-4 transition-all hover:shadow-lg">
       <div className="space-y-4">
@@ -49,14 +57,28 @@ export default function SubscriptionCard({ subscription }) {
         >
           Edit
         </Button>
-        <Button style={{ backgroundColor: "var(--danger)", color: "white" }}>
+        <Tooltip title="Block User">
+          <CustomConfirm
+            title="Block User"
+            description="Are you sure to delete this subscription?"
+            onConfirm={() => onConfirm(subscription._id)}
+          >
+            <Button
+              style={{ backgroundColor: "var(--danger)", color: "white" }}
+            >
+              Delete
+            </Button>
+          </CustomConfirm>
+        </Tooltip>
+        {/* <Button style={{ backgroundColor: "var(--danger)", color: "white" }}>
           Delete
-        </Button>
+        </Button> */}
       </div>
       <EditSubscriptionModal
         open={showEditSubscriptionModal}
         setOpen={setShowEditSubscriptionModal}
         subscriptionDeatils={editSubscription}
+        onUpdated={onUpdated}
       />
     </div>
   );

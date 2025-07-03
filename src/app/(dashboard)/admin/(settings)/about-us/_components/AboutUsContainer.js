@@ -2,19 +2,41 @@
 
 import FormWrapper from "@/components/Form/FormWrapper";
 import UTextEditor from "@/components/Form/UTextEditor";
-import { updateAboutUs } from "@/features/settings";
+import { getRules, updateSettings } from "@/features/settings";
 import { Button } from "antd";
 import { Edit } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export default function AboutUsContainer({ aboutUs }) {
+export default function AboutUsContainer() {
+  const [aboutUs, setAboutUs] = useState(null);
+
   const submitHandler = async (data) => {
-    const res = await updateAboutUs(data);
+    console.log("Admin about us:", data);
+    const res = await updateSettings({
+      content: data.aboutUs,
+      type: "about",
+    });
     if (!res.success) {
       alert("Updating about us failed");
       return;
     }
+    setAboutUs(res.data.content);
     console.log("Admin about us profile:", res);
   };
+
+  const fetchAboutus = async () => {
+    const res = await getRules({ url: "/rules/about" });
+    if (!res.success) {
+      message.error("Failed to fetch users");
+    }
+    console.log("fetchaboutus", res.data.content);
+
+    setAboutUs(res.data.content);
+  };
+
+  useEffect(() => {
+    fetchAboutus();
+  }, []);
   return (
     <section>
       <h3 className="mb-6 text-2xl font-semibold">About Us</h3>

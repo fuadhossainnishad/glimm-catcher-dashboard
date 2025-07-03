@@ -7,20 +7,17 @@ export const getAllUser = async () => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res;
+  return res.data;
 };
 
-export const deleteUser = async ({ id }) => {
+export const deleteUser = async (data) => {
   const token = sessionStorage.getItem("token");
   console.log("token:", token);
 
-  const res = await axiosInstance.delete(
-    "/users/delete",
-    { id },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  const res = await axiosInstance.delete("/users/delete", data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+  });
+  return res.data;
 };

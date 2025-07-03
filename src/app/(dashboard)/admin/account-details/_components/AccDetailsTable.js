@@ -41,8 +41,11 @@ export default function AccDetailsTable() {
   const [selectedUser, setSelectedUser] = useState(null);
 
   // Block user handler
-  const handleBlockUser = async (userId) => {
-    const res = await deleteUser(userid);
+  const handleBlockUser = async (data) => {
+    const res = await deleteUser(data);
+    if (!res.success) {
+      message.error("Failed to fetch users");
+    }
     message.success("User blocked successfully");
   };
 
@@ -57,7 +60,7 @@ export default function AccDetailsTable() {
     if (!res.success) {
       message.error("Failed to fetch users");
     }
-    const transform = await data(res.data.data);
+    const transform = await data(res.data);
     setUserData(transform);
   };
 

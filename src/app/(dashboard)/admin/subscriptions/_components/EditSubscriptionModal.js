@@ -1,3 +1,4 @@
+"use client";
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import UMultiSelect from "@/components/Form/UMultiSelect";
@@ -6,24 +7,30 @@ import { createSubscribe, updateSubscribe } from "@/features/subscription";
 import { createSubscriptionSchema } from "@/schema/subscriptionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Modal } from "antd";
-import React from "react";
+import React, { useState } from "react";
 
 export default function EditSubscriptionModal({
   open,
   setOpen,
   subscriptionDeatils,
+  onUpdated,
 }) {
+  const [localDetails, setLocalDetails] = useState(subscriptionDeatils);
+
   const onSubmit = async (data) => {
     console.log(data);
-    const res = await updateSubscribe(data);
+    const res = await updateSubscribe({ id: subscriptionDeatils._id, ...data });
     console.log("sunscription:", res.data);
 
     if (!res.data.success) {
       alert("Subscription not updated yet");
       return;
     }
+    subscriptionDeatils = { _id: subscriptionDeatils._id, ...data };
     alert("Subscription plan updated successfully");
     console.log("sunscription:", res.data);
+    onUpdated?.();
+    setOpen(false);
   };
 
   return (

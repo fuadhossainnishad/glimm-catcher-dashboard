@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Modal } from "antd";
 import React from "react";
 
-export default function AddSubscriptionModal({ open, setOpen }) {
+export default function AddSubscriptionModal({ open, setOpen, onCreated }) {
   const onSubmit = async (data) => {
     console.log(data);
     const res = await createSubscribe(data);
@@ -20,6 +20,8 @@ export default function AddSubscriptionModal({ open, setOpen }) {
     }
     alert("Subscription plan created successfully");
     console.log("sunscription:", res.data);
+    onCreated?.();
+    setOpen(false);
   };
 
   return (
