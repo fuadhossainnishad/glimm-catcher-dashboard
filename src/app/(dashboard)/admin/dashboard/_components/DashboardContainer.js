@@ -1,36 +1,60 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import EarningChart from "./EarningChart";
 import RecentUserTable from "./RecentUserTable";
 import UsersChart from "./UsersChart";
 import { Icon } from "@iconify/react";
 import { Tag } from "antd";
 import { Flex } from "antd";
+import { getTotalEarnings, getTotalUser } from "@/features/dashboard";
 
 // Dummy data
-const userStats = [
-  {
-    key: "users",
-    label: "Total Users",
-    value: 189,
-    growth: { type: "up", value: "4.5%" },
-    icon: "clarity:users-line",
-  },
-  {
-    key: "earnings",
-    label: "Total Earnings",
-    value: 1245,
-    growth: { type: "down", value: "2.5%" },
-    icon: "streamline:dollar-coin-1",
-  },
-];
+const userStats = (dashBoard) => {
+  return [
+    {
+      key: "users",
+      label: "Total Users",
+      value: typeof dashBoard.totalUser === "number" ? dashBoard.totalUser : 0,
+      growth: { type: "up", value: "4.5%" },
+      icon: "clarity:users-line",
+    },
+    {
+      key: "earnings",
+      label: "Total Earnings",
+      value:
+        typeof dashBoard.totalEarnings === "number"
+          ? dashBoard.totalEarnings
+          : 0,
+      growth: { type: "down", value: "2.5%" },
+      icon: "streamline:dollar-coin-1",
+    },
+  ];
+};
 
 export default function DashboardContainer() {
+  const [dashboard, setDashboad] = useState({});
+  const handleDashboard = async (data) => {
+    const totalUser = await getTotalUser();
+    const totalEarnings = await getTotalEarnings();
+    if (!totalUser.success) {
+      alert("No user exist yet");
+      return;
+    }
+    console.log("totalUser:", totalUser.data);
+    setDashboad({
+      totalUser: totalUser.data,
+      totalEarnings: totalEarnings.data,
+    });
+  };
+  useEffect(() => {
+    handleDashboard();
+  }, []);
   return (
     <div className="space-y-10">
       {/* User Stats Section */}
       <section className="grid grid-cols-2 gap-10">
-        {userStats?.map((stat) => (
+        {userStats(dashboard)?.map((stat) => (
           <Flex
             key={stat.key}
             align="center"

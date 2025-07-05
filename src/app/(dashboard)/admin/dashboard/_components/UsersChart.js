@@ -10,55 +10,53 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePicker } from "antd";
 import dayjs from "dayjs";
-
-const data = [
-  { month: "Jan", user: 120 },
-  { month: "Feb", user: 140 },
-  { month: "Mar", user: 152 },
-  { month: "Apr", user: 122 },
-  { month: "May", user: 153 },
-  { month: "Jun", user: 164 },
-  { month: "Jul", user: 193 },
-  { month: "Aug", user: 134 },
-  { month: "Sep", user: 184 },
-  { month: "Oct", user: 126 },
-  { month: "Nov", user: 164 },
-  { month: "Dec", user: 215 },
-];
+import { getSpecificUserOverview } from "@/features/dashboard";
 
 const UsersChart = () => {
-  const [selectedYear, setSelectedYear] = useState("2024");
-  const [selectedUserType, setSelectedUserType] = useState("user");
+  const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY"));
+  const [selectedUserGrowth, setSelectedUserGrowth] = useState([]);
 
   const handleChange = (value) => {
     setSelectedYear(value);
   };
-  const handleUserChange = (value) => {
-    setSelectedUserType(value);
+  const handleUserChange = async (year) => {
+    const userGrowth = await getSpecificUserOverview({ year });
+    if (!userGrowth.success) {
+      alert("No data have found yet");
+      return;
+    }
+    console.log("userGrowth:", userGrowth.data);
+    const formatted = userGrowth.data.users.map((item) => ({
+      month: item.month,
+      total: item.total || 0,
+    }));
+
+    setSelectedUserGrowth(formatted);
   };
 
+  useEffect(() => {
+    handleUserChange(selectedYear);
+  }, [selectedYear]);
+
   return (
-    <div className="rounded-xl p-6 w-full xl:w-1/2 bg-white">
-      <div className="flex lg:flex-wrap xl:flex-nowrap justify-between items-center mb-10 gap-2">
+    <div className="w-full rounded-xl bg-white p-6 xl:w-1/2">
+      <div className="mb-10 flex items-center justify-between gap-2 lg:flex-wrap xl:flex-nowrap">
         <h1 className="text-xl font-bold">Users Overview</h1>
 
-          <DatePicker
-            // onChange={(_, dateString) =>
-            //   setJoinYear(moment(dateString).format("YYYY"))
-            // }
-            picker="year"
-            defaultValue={dayjs()}
-            className="!text-white !border-none !py-1.5"
-          />
- 
+        <DatePicker
+          onChange={(_, dateString) => setSelectedYear(dateString)}
+          picker="year"
+          defaultValue={dayjs()}
+          className="!border-none !py-1.5 !text-white"
+        />
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
         <BarChart
-          data={data}
+          data={selectedUserGrowth}
           margin={{
             top: 0,
             right: 0,
@@ -99,7 +97,7 @@ const UsersChart = () => {
             barSize={22}
             radius={0}
             background={false}
-            dataKey="user"
+            dataKey="total"
             fill="var(--primary)"
           />
         </BarChart>
