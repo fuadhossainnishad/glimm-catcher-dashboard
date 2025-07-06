@@ -13,8 +13,8 @@ export const getAllUser = async () => {
 export const deleteUser = async (data) => {
   const token = sessionStorage.getItem("token");
   console.log("token:", token);
-
-  const res = await axiosInstance.delete("/users/delete", data, {
+  console.log("data:", data);
+  const res = await axiosInstance.delete(`/users/${data}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -1,10 +1,11 @@
 "use client";
+import { getSpecificEarningsOverview } from "@/features/earning";
 import { Icon } from "@iconify/react";
 import { Flex } from "antd";
 import { DatePicker } from "antd";
 import { Select } from "antd";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -31,11 +32,35 @@ const data = [
 ];
 
 const EarningChart = () => {
-  const [selectedYear, setSelectedYear] = useState("2024");
+  const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY"));
+  const [selectedEarningGrowth, setSelectedEarningGrowth] = useState([]);
 
-  const handleChange = (value) => {
-    setSelectedYear(value);
+  const handleEarningChange = async (year) => {
+    const earningGrowth = await getSpecificEarningsOverview({
+      year: Number(year),
+    });
+    console.log("API response:", earningGrowth);
+
+    if (!earningGrowth.success) {
+      alert("No data has been found yet");
+      return;
+    }
+
+    const formatted = earningGrowth.data.earnings.map((item) => ({
+      month: item.month,
+      total: item.total || 0,
+    }));
+
+    setSelectedEarningGrowth({
+      growthPercentage: earningGrowth.data.growthPercentage,
+      trend: earningGrowth.data.trend,
+      earnings: formatted,
+    });
   };
+
+  useEffect(() => {
+    handleEarningChange(selectedYear);
+  }, [selectedYear]);
 
   return (
     <div className="w-full rounded-xl bg-white p-6 xl:w-1/2">
@@ -56,15 +81,21 @@ const EarningChart = () => {
               gap={2}
               className="ml-2 font-bold text-green-500"
             >
-              <Icon icon="iconamoon:trend-up-light" height={16} width={16} />{" "}
-              35.80%
+              {selectedEarningGrowth.growthPercentage || 0}%
+              <Icon
+                icon={
+                  selectedEarningGrowth.trend === "up"
+                    ? "iconamoon:trend-up-light"
+                    : "iconamoon:trend-down-light"
+                }
+                height={16}
+                width={16}
+              />
             </Flex>
           </Flex>
 
           <DatePicker
-            // onChange={(_, dateString) =>
-            //   setJoinYear(moment(dateString).format("YYYY"))
-            // }
+            onChange={(_, dateString) => setSelectedYear(dateString)}
             picker="year"
             defaultValue={dayjs()}
             className="!border-none !py-1.5 !text-white"
@@ -74,7 +105,7 @@ const EarningChart = () => {
 
       <ResponsiveContainer width="100%" height={300}>
         <AreaChart
-          data={data}
+          data={selectedEarningGrowth.earnings}
           margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
         >
           <defs>
@@ -117,7 +148,7 @@ const EarningChart = () => {
           <Area
             activeDot={{ fill: "var(--primary)" }}
             type="monotone"
-            dataKey="earning"
+            dataKey="total"
             strokeWidth={0}
             stroke="var(--primary)"
             fill="url(#color)"

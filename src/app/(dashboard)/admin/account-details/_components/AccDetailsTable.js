@@ -23,7 +23,7 @@ import { formateDate } from "@/utils/formateDate";
 const data = async (userData) => {
   return userData.map((user, inx) => ({
     key: inx + 1,
-    id: user.id,
+    id: user._id,
     name: user.fullName,
     userImg: user.userImage || userImage,
     email: user.email,
@@ -46,6 +46,8 @@ export default function AccDetailsTable() {
     if (!res.success) {
       message.error("Failed to fetch users");
     }
+    console.log("data:", res.data);
+
     message.success("User blocked successfully");
   };
 
@@ -66,6 +68,7 @@ export default function AccDetailsTable() {
 
   useEffect(() => {
     handleUserProfile();
+    handleBlockUser();
   }, []);
 
   // ================== Table Columns ================

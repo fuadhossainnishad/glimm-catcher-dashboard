@@ -19,9 +19,6 @@ const UsersChart = () => {
   const [selectedYear, setSelectedYear] = useState(dayjs().format("YYYY"));
   const [selectedUserGrowth, setSelectedUserGrowth] = useState([]);
 
-  const handleChange = (value) => {
-    setSelectedYear(value);
-  };
   const handleUserChange = async (year) => {
     const userGrowth = await getSpecificUserOverview({ year });
     if (!userGrowth.success) {

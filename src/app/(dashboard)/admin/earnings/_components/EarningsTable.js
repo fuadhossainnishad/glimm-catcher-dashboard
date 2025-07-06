@@ -11,17 +11,48 @@ const { Search } = Input;
 import userImg from "@/assets/images/user-avatar.png";
 import { Image } from "antd";
 import { formatString } from "@/utils/formatString";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import getTagColor from "@/utils/getTagColor";
 import { handleSearch } from "@/lib/handleSearch";
+import {
+  getAllPayment,
+  getMonthlyEarningsStats,
+  getTodaysEarnings,
+  getTotalEarnings,
+} from "@/features/earning";
+import EarningModal from "./EarningModal";
 
 export default function EarningsTable() {
   const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [earnings, setEarnings] = useState([]);
+  const [earnings, setEarnings] = useState({});
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+
+  const handlEarningData = async () => {
+    const allPayment = await getAllPayment();
+    const totalEarning = await getTotalEarnings();
+    const todayEarning = await getTodaysEarnings();
+    if (
+      !allPayment.success ||
+      !totalEarning.success ||
+      !monthlyEarning.success
+    ) {
+      message.error("Failed to fetch earnings");
+    }
+    setEarnings({
+      todayEarning: todayEarning.data,
+      allPayment: allPayment.data,
+      totalEarning: totalEarning.data,
+    });
+  };
+
+  useEffect(() => {
+    handlEarningData();
+  });
 
   // =============== Table Data =================
-  const data = Array.from({ length: 20 }).map((_) => ({
+  const data = Array.from({ length: 20 }).map((_, inx) => ({
+    key: inx + 1,
     id: "INV0938",
     paidBy: {
       name: "Sarah Johnson",
@@ -124,7 +155,10 @@ export default function EarningsTable() {
       title: "Action",
       render: () => {
         return (
-          <Button style={{ backgroundColor: "var(--primary-yellow)" }}>
+          <Button
+            style={{ backgroundColor: "var(--primary-yellow)" }}
+            onClick={() => setShowModalOpen(true)}
+          >
             View Details
           </Button>
         );
@@ -161,7 +195,9 @@ export default function EarningsTable() {
 
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Today&apos;s Earnings</h4>
-              <h4 className="text-lg font-bold">$ 1,000</h4>
+              <h4 className="text-lg font-bold">
+                $ {earnings.todayEarning || "1,000"}
+              </h4>
             </Flex>
           </Flex>
         </Col>
@@ -178,7 +214,9 @@ export default function EarningsTable() {
 
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Total Earnings</h4>
-              <h4 className="text-lg font-bold">$ 10,000</h4>
+              <h4 className="text-lg font-bold">
+                $ {earnings.todayEarning || "10,000"}
+              </h4>
             </Flex>
           </Flex>
         </Col>
@@ -205,6 +243,11 @@ export default function EarningsTable() {
             pageSize: 15,
           }}
         ></Table>
+        <EarningModal
+          open={detailsModalOpen}
+          setOpen={setDetailsModalOpen}
+          user={earnings}
+        />
       </div>
     </div>
   );

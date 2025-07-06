@@ -7,7 +7,7 @@ import UsersChart from "./UsersChart";
 import { Icon } from "@iconify/react";
 import { Tag } from "antd";
 import { Flex } from "antd";
-import { getTotalEarnings, getTotalUser } from "@/features/dashboard";
+import { getTotalEarnings } from "@/features/earning";
 
 // Dummy data
 const userStats = (dashBoard) => {
