@@ -6,16 +6,22 @@ import { updateAdminProfile } from "@/features/admin";
 import { editProfileSchema } from "@/schema/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
-import { useState } from "react";
 
-export default function EditProfileForm({ profile }) {
+export default function EditProfileForm({ profile, refetchProfile }) {
   const handleSubmit = async (data) => {
-    const res = await updateAdminProfile({ id: profile?.id, ...data });
+    const { fullName } = data;
+    const formData = new FormData();
+    formData.append("fullName", fullName);
+    for (let [k, v] of formData.entries()) {
+      console.log("FormData entry:", k, v); // confirm here
+    }
+    const res = await updateAdminProfile(formData);
     if (!res.success) {
       alert("Profile updated failed");
       return;
     }
-    console.log(res);
+    console.log(res.data);
+    refetchProfile();
   };
 
   return (
@@ -24,14 +30,14 @@ export default function EditProfileForm({ profile }) {
         onSubmit={handleSubmit}
         resolver={zodResolver(editProfileSchema)}
         defaultValues={{
-          id: profile?.id,
-          name: profile?.name || "Glimm Catcher",
+          id: profile?._id,
+          fullName: profile?.fullName || "Glimm Catcher",
           email: profile?.email || "glimm-catcher@gmail.com",
-          contact: profile?.contact || "+1234567890",
+          contact: "+1234567890",
         }}
       >
         <UInput
-          name="name"
+          name="fullName"
           label="Name"
           type="text"
           placeholder="Enter your name"

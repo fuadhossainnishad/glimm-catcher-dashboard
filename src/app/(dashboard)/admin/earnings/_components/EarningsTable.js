@@ -25,25 +25,29 @@ import EarningModal from "./EarningModal";
 export default function EarningsTable() {
   const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
   const [searchText, setSearchText] = useState("");
-  const [earnings, setEarnings] = useState({});
+  const [earnings, setEarnings] = useState([]);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
+  const [selectEarnings, setSelectEarnings] = useState(null);
+  const [earningStats, setEarningStats] = useState({});
 
   const handlEarningData = async () => {
     const allPayment = await getAllPayment();
     const totalEarning = await getTotalEarnings();
     const todayEarning = await getTodaysEarnings();
-    if (
-      !allPayment.success ||
-      !totalEarning.success ||
-      !monthlyEarning.success
-    ) {
+    if (!allPayment.success || !totalEarning.success || !todayEarning.success) {
       message.error("Failed to fetch earnings");
     }
-    setEarnings({
+    console.log("earning:", {
       todayEarning: todayEarning.data,
+      totalEarning: totalEarning.data,
       allPayment: allPayment.data,
+    });
+
+    setEarningStats({
+      todayEarning: todayEarning.data,
       totalEarning: totalEarning.data,
     });
+    setEarnings(allPayment.data);
   };
 
   useEffect(() => {
@@ -51,17 +55,17 @@ export default function EarningsTable() {
   });
 
   // =============== Table Data =================
-  const data = Array.from({ length: 20 }).map((_, inx) => ({
-    key: inx + 1,
-    id: "INV0938",
+  const data = earnings.map((earning, inx) => ({
+    key: earning._id || inx + 1,
+    id: earning._id || "INV0938",
     paidBy: {
-      name: "Sarah Johnson",
-      img: userImg,
+      name: earning.paidBy.name || "Sarah Johnson",
+      img: earning.paidBy.userImg || userImg,
     },
-    amount: "499",
-    status: "Paid",
-    tnxId: "454842343454",
-    date: "Aug, 15 2023 02:29 PM",
+    amount: earning.amount || "499",
+    status: earning.status || "Paid",
+    tnxId: earning.transactionId || "454842343454",
+    date: earning.paymentDate || "Aug, 15 2023 02:29 PM",
   }));
 
   const handleSearchTransaction = handleSearch(data, searchText, [
@@ -80,17 +84,17 @@ export default function EarningsTable() {
     {
       title: "Paid By",
       dataIndex: "paidBy",
-      render: (value) => {
+      render: (value, record) => {
         return (
           <Flex align="center" justify="start" gap={8}>
             <Image
-              src={value.img.src}
-              alt={value.name}
+              src={record.img}
+              alt={record.name}
               height={30}
               width={30}
               className="aspect-square rounded-full object-cover"
             />
-            <p>{value.name}</p>
+            <p>{record.name}</p>
           </Flex>
         );
       },
@@ -153,11 +157,14 @@ export default function EarningsTable() {
 
     {
       title: "Action",
-      render: () => {
+      render: (_, record) => {
         return (
           <Button
             style={{ backgroundColor: "var(--primary-yellow)" }}
-            onClick={() => setShowModalOpen(true)}
+            onClick={() => {
+              setDetailsModalOpen(true);
+              setSelectEarnings(record);
+            }}
           >
             View Details
           </Button>
@@ -215,7 +222,7 @@ export default function EarningsTable() {
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Total Earnings</h4>
               <h4 className="text-lg font-bold">
-                $ {earnings.todayEarning || "10,000"}
+                $ {earningStats.totalEarning || "10,000"}
               </h4>
             </Flex>
           </Flex>
@@ -246,7 +253,7 @@ export default function EarningsTable() {
         <EarningModal
           open={detailsModalOpen}
           setOpen={setDetailsModalOpen}
-          user={earnings}
+          earningData={selectEarnings}
         />
       </div>
     </div>

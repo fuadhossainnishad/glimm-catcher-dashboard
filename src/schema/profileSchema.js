@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const editProfileSchema = z.object({
-  name: z
+  fullName: z
     .string({ required_error: "Name is required" })
     .min(1, { message: "Name is required" }),
   email: z

@@ -4,10 +4,11 @@ import { Modal } from "antd";
 import Image from "next/image";
 import userImage from "@/assets/images/user-avatar-lg.png";
 import { Tag } from "antd";
-import { useState } from "react";
 import { formateDate } from "@/utils/formateDate";
 
 export default function EarningModal({ open, setOpen, earningData }) {
+  if (!earningData || !earningData.paidBy) return null;
+
   return (
     <Modal
       centered
@@ -22,7 +23,7 @@ export default function EarningModal({ open, setOpen, earningData }) {
       <div className="flex-center-between gap-4 rounded-xl bg-demin-primary-50 p-3 px-5">
         <div className="flex-center-start gap-x-2">
           <Image
-            src={earningData.userImage || userImage}
+            src={userImage}
             alt="user image"
             height={2400}
             width={2400}
@@ -30,7 +31,7 @@ export default function EarningModal({ open, setOpen, earningData }) {
           />
 
           <h4 className="text-lg font-semibold">
-            {earningData.name || "Soumaya"}
+            {earningData.paidBy.name || "Soumaya"}
           </h4>
         </div>
 
@@ -68,7 +69,7 @@ export default function EarningModal({ open, setOpen, earningData }) {
         </div>
         <div className="flex-center-between">
           <span>Date :</span>
-          <span>{formateDate(earningData.paymentDate) || "11 Oct, 2024"}</span>
+          <span>{formateDate(earningData.paymentDate)}</span>
         </div>
       </section>
     </Modal>

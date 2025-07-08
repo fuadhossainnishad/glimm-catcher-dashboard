@@ -1,3 +1,4 @@
+"use client";
 import FormWrapper from "@/components/Form/FormWrapper";
 import UInput from "@/components/Form/UInput";
 import { changeAdminPassword } from "@/features/admin";
@@ -6,28 +7,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
 import { useState } from "react";
 
-export default function ChangePassForm({ profile }) {
+export default function ChangePassForm({ profile, refetchProfile }) {
+  const [password, setPassword] = useState({});
   const handleSubmit = async (data) => {
-    console.log(data);
+    const { oldPassword, newPassword, confirmPassword } = data;
+    setPassword({
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    });
+    const res = await changeAdminPassword({
+      oldPassword,
+      newPassword,
+      confirmPassword,
+    });
 
-    const res = await changeAdminPassword({ id: profile?.id, ...data });
     if (!res.success) {
       alert("Changing admin password failed");
       return;
     }
-    console.log(res);
-  };
 
+    alert("Password updated successfully");
+    refetchProfile();
+  };
   return (
     <section className="mt-5 px-10">
       <FormWrapper
         onSubmit={handleSubmit}
         resolver={zodResolver(changePasswordSchema)}
         defaultValues={{
-          id: profile?.id,
-          oldPassword: profile?.oldPassword || "eufguysdgsfghfgh",
-          newPassword: profile?.newPassword || "eufguysdgsfghfgh",
-          confirmPassword: profile?.confirmPassword || "eufguysdgsfghfgh",
+          id: profile?._id,
+          oldPassword: password.oldPassword,
+          newPassword: password.newPassword,
+          confirmPassword: password.confirmPassword,
         }}
       >
         <UInput
