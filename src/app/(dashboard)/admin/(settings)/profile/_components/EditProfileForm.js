@@ -9,9 +9,11 @@ import { Button } from "antd";
 
 export default function EditProfileForm({ profile, refetchProfile }) {
   const handleSubmit = async (data) => {
-    const { fullName } = data;
+    const { fullName, phoneNumber } = data;
     const formData = new FormData();
     formData.append("fullName", fullName);
+    formData.append("phneNumber", phoneNumber);
+
     for (let [k, v] of formData.entries()) {
       console.log("FormData entry:", k, v); // confirm here
     }
@@ -33,7 +35,7 @@ export default function EditProfileForm({ profile, refetchProfile }) {
           id: profile?._id,
           fullName: profile?.fullName || "Glimm Catcher",
           email: profile?.email || "glimm-catcher@gmail.com",
-          contact: "+1234567890",
+          contact: profile?.phoneNumber || "+1234567890",
         }}
       >
         <UInput

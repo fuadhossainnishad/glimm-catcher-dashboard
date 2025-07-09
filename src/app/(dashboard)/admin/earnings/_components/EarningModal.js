@@ -31,12 +31,12 @@ export default function EarningModal({ open, setOpen, earningData }) {
           />
 
           <h4 className="text-lg font-semibold">
-            {earningData.paidBy.name || "Soumaya"}
+            `${earningData.paidBy.name || "Soumaya"}`
           </h4>
         </div>
 
         <p className="text-xl font-semibold">
-          ${earningData.amount || "86.03"}
+          `${earningData.amount || "86.03"}`
         </p>
       </div>
 
@@ -44,32 +44,32 @@ export default function EarningModal({ open, setOpen, earningData }) {
         <div className="flex-center-between">
           <span>Status :</span>
           <Tag color="green" className="!m-0 !text-sm">
-            {earningData.status || "Successful"}
+            `${earningData.status || "Successful"}`
           </Tag>
         </div>
 
         <div className="flex-center-between">
           <span>Plan :</span>
           <Tag className="!m-0 !text-sm" color="blue">
-            {earningData.plan || "Monthly"}
+            `${earningData.plan || "Monthly"}`
           </Tag>
         </div>
 
         <div className="flex-center-between">
           <span>Transaction ID :</span>
-          <span>{earningData.transactionId || "#0000008f"}</span>
+          <span>`${earningData.transactionId || "#0000008f"}`</span>
         </div>
         <div className="flex-center-between">
           <span>Transaction type :</span>
-          <span>{earningData.transactionType || "Credit Card"}</span>
+          <span>`${earningData.transactionType || "Credit Card"}`</span>
         </div>
         <div className="flex-center-between">
           <span>A/C number :</span>
-          <span>{earningData.cardDetails || "*** **** **** *545"}</span>
+          <span>`${earningData.cardDetails || "*** **** **** *545"}`</span>
         </div>
         <div className="flex-center-between">
           <span>Date :</span>
-          <span>{formateDate(earningData.paymentDate)}</span>
+          <span>`${formateDate(earningData.paymentDate)}`</span>
         </div>
       </section>
     </Modal>

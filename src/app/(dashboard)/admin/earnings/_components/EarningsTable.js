@@ -47,7 +47,7 @@ export default function EarningsTable() {
       todayEarning: todayEarning.data,
       totalEarning: totalEarning.data,
     });
-    setEarnings(allPayment.data);
+    setEarnings(await allPayment.data);
   };
 
   useEffect(() => {
@@ -55,18 +55,20 @@ export default function EarningsTable() {
   });
 
   // =============== Table Data =================
-  const data = earnings.map((earning, inx) => ({
-    key: earning._id || inx + 1,
-    id: earning._id || "INV0938",
-    paidBy: {
-      name: earning.paidBy.name || "Sarah Johnson",
-      img: earning.paidBy.userImg || userImg,
-    },
-    amount: earning.amount || "499",
-    status: earning.status || "Paid",
-    tnxId: earning.transactionId || "454842343454",
-    date: earning.paymentDate || "Aug, 15 2023 02:29 PM",
-  }));
+  const data = async (allEarnings) => {
+    return earnings.map((earning, inx) => ({
+      key: earning._id || inx + 1,
+      id: earning._id || "INV0938",
+      paidBy: {
+        name: earning.fullName || "Sarah Johnson",
+        img: earning.image.url || userImg,
+      },
+      amount: earning.amount || "499",
+      status: earning.status || "Paid",
+      tnxId: earning.transactionId || "454842343454",
+      date: earning.paymentDate || "Aug, 15 2023 02:29 PM",
+    }));
+  };
 
   const handleSearchTransaction = handleSearch(data, searchText, [
     "paidBy.name",
@@ -88,13 +90,13 @@ export default function EarningsTable() {
         return (
           <Flex align="center" justify="start" gap={8}>
             <Image
-              src={record.img}
-              alt={record.name}
+              src={value.img}
+              alt={value.name}
               height={30}
               width={30}
               className="aspect-square rounded-full object-cover"
             />
-            <p>{record.name}</p>
+            <p>{value.name}</p>
           </Flex>
         );
       },
