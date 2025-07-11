@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "@/lib/Providers";
 import Script from "next/script";
 import "@splidejs/react-splide/css";
+import { AdminProfileProvider } from "@/context/adminProfileContext";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -61,7 +62,9 @@ export default function RootLayout({ children }) {
       <body
         className={`${dmSans.className} ${roboto.variable} box-border antialiased`}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <AdminProfileProvider>{children}</AdminProfileProvider>
+        </Providers>
       </body>
     </html>
   );

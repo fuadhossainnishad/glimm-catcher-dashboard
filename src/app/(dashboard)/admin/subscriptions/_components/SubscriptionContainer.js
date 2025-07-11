@@ -10,6 +10,7 @@ import {
   getAllSubscribe,
   getSubscribe,
 } from "@/features/subscription";
+import { message } from "antd";
 
 export default function SubscriptionContainer() {
   const [showAddSubscriptionModal, setShowAddSubscriptionModal] =
@@ -21,13 +22,13 @@ export default function SubscriptionContainer() {
   const handleSubscription = async () => {
     try {
       const res = await getAllSubscribe();
-      console.log("loginRes:", res.data);
+      console.log("subscriptions:", res.data);
 
       if (!res.success) {
         alert("No subscription created yet");
         return;
       }
-      console.log("loginRes:", res.data);
+      console.log("subscriptions:", res.data);
       setSubcsription(res.data);
     } catch (error) {
       console.error(error);
@@ -40,7 +41,7 @@ export default function SubscriptionContainer() {
 
   const handleDeleteSubscription = async (data) => {
     const res = await deleteSubscribe(data);
-    if (!res.success) {
+    if (!res?.data?.success) {
       message.error("Failed to fetch users");
     }
     message.success("User blocked successfully");
@@ -74,7 +75,7 @@ export default function SubscriptionContainer() {
             key={subscription._id}
             subscription={subscription}
             onUpdated={handleSubscription}
-            onConfirm={() => handleDeleteSubscription(subscription)}
+            onConfirm={() => handleDeleteSubscription(subscription._id)}
           />
         ))}
       </div>

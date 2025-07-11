@@ -6,15 +6,18 @@ import { ConfigProvider } from "antd";
 import ChangePassForm from "./ChangePassForm";
 import EditProfileForm from "./EditProfileForm";
 import { Tabs } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getAdminProfile, updateAdminProfile } from "@/features/admin";
+import { useAdminProfile } from "@/context/adminProfileContext";
+import { message } from "antd";
 
 export default function ProfileContainer() {
   const [profile, setProfile] = useState({});
   const [previewImage, setPreviewImage] = useState(null);
   const fileInputRef = useRef(null);
+  const { setAdminProfile } = useAdminProfile();
 
-  const profileHandler = async () => {
+  const profileHandler = useCallback(async () => {
     const res = await getAdminProfile();
     if (!res.success) {
       alert("Fetch admin prfile failed");
@@ -24,12 +27,13 @@ export default function ProfileContainer() {
     console.log("Admin profile:", res.data.image);
 
     setProfile(res.data);
+    setAdminProfile(res.data);
     setPreviewImage(null);
-  };
+  }, [setAdminProfile]);
 
   useEffect(() => {
     profileHandler();
-  }, []);
+  }, [profileHandler]);
 
   const handleImageChange = async (e) => {
     const file = e.target.files[0];

@@ -42,39 +42,50 @@ export default function EarningsTable() {
       totalEarning: totalEarning.data,
       allPayment: allPayment.data,
     });
+    const testFallbackPayments = [
+      {
+        _id: "INV0001",
+        fullName: "Fuad Hossain",
+        image: { url: userImg },
+        amount: 250.5,
+        status: "Paid",
+        transactionId: "TX123456789",
+        paymentDate: "2024-07-10",
+      },
+    ];
+
+    const fallback =
+      allPayment.data?.length === 0 ? testFallbackPayments : allPayment.data;
 
     setEarningStats({
       todayEarning: todayEarning.data,
       totalEarning: totalEarning.data,
     });
-    setEarnings(await allPayment.data);
+    setEarnings(fallback);
   };
 
   useEffect(() => {
     handlEarningData();
-  });
+  }, []);
 
   // =============== Table Data =================
-  const data = async (allEarnings) => {
-    return earnings.map((earning, inx) => ({
-      key: earning._id || inx + 1,
-      id: earning._id || "INV0938",
-      paidBy: {
-        name: earning.fullName || "Sarah Johnson",
-        img: earning.image.url || userImg,
-      },
-      amount: earning.amount || "499",
-      status: earning.status || "Paid",
-      tnxId: earning.transactionId || "454842343454",
-      date: earning.paymentDate || "Aug, 15 2023 02:29 PM",
-    }));
-  };
+  const data = earnings.map((earning, inx) => ({
+    key: earning._id || inx + 1,
+    id: earning._id || "INV0938",
+    paidBy: {
+      name: earning.fullName || "Sarah Johnson",
+      img: earning.image?.url || userImg,
+    },
+    amount: earning.amount || "499",
+    status: earning.status || "Paid",
+    tnxId: earning.transactionId || "454842343454",
+    date: earning.paymentDate || "Aug, 15 2023 02:29 PM",
+  }));
+  console.log("Earning data:", data);
 
-  const handleSearchTransaction = handleSearch(data, searchText, [
-    "paidBy.name",
-    "status",
-    "amount",
-  ]);
+  const handleSearchTransaction = Array.isArray(data)
+    ? handleSearch(data, searchText, ["paidBy.name", "status", "amount"])
+    : [];
 
   // =============== Table columns ===============
   const columns = [
@@ -205,7 +216,7 @@ export default function EarningsTable() {
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Today&apos;s Earnings</h4>
               <h4 className="text-lg font-bold">
-                $ {earnings.todayEarning || "1,000"}
+                $ {earnings.todayEarning?.amount || "1,000"}
               </h4>
             </Flex>
           </Flex>
@@ -224,7 +235,7 @@ export default function EarningsTable() {
             <Flex align="center" gap={10}>
               <h4 className="text-lg font-semibold">Total Earnings</h4>
               <h4 className="text-lg font-bold">
-                $ {earningStats.totalEarning || "10,000"}
+                $ {earningStats.totalEarning?.amount || "10,000"}
               </h4>
             </Flex>
           </Flex>

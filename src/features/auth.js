@@ -44,45 +44,34 @@ export const login = async ({ email, password }) => {
   return res.data;
 };
 
-export const forgotPassword = async ({ email }) => {
-  console.log({ email });
-
-  const res = await axiosInstance.post(
-    "/admin/forgot-password",
-    { email },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
+export const forgotPassword = async (data) => {
+  console.log(data.email);
+  const res = await axiosInstance.post("/admin/forgot-password", data, {
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
-  return res;
+  });
+  return res.data;
 };
 
-export const otpVerify = async ({ otp }) => {
-  console.log({ otp });
-  const token = sessionStorage.getItem("token");
-  console.log({ token });
-  const res = await axiosInstance.post(
-    "/admin/verify-otp",
-    { otp },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+export const otpVerify = async (data) => {
+  console.log("otpVerify:", data);
+  const res = await axiosInstance.post("/admin/verify-otp", data, {
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
-  return res;
+  });
+  return res.data;
 };
 
-export const changePassword = async (data) => {
-  console.log({ otp });
-  const token = sessionStorage.getItem("token");
-  console.log({ token });
-  const res = await axiosInstance.post("/auth/change-password", data, {
+export const changePassword = async (passwordReset) => {
+  const { token, data } = passwordReset;
+  console.log(data);
+  console.log(token);
+  const res = await axiosInstance.post("/admin/reset-password", data, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res;
+  return res.data;
 };

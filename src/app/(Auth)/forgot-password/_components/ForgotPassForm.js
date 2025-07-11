@@ -14,16 +14,16 @@ export default function ForgotPassForm() {
   const router = useRouter();
 
   const onSubmit = async (data) => {
-    console.log("loginData:", data);
+    console.log("forgotPassword:", data);
 
     try {
       const res = await forgotPassword(data);
       console.log("res:", res);
-      router.push("/otp-verification");
-      if (!res.success) {
-        alert("otp not arrived");
-        return;
+      if (res.success) {
+        sessionStorage.setItem("email", data.email);
+        router.push("/otp-verification");
       }
+      alert("Otp sent to email");
     } catch (error) {
       console.error(error);
       alert(

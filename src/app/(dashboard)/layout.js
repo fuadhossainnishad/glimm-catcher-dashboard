@@ -1,14 +1,19 @@
+"use client";
 import HeaderContainer from "@/components/shared/HeaderContainer/HeaderContainer";
 import SidebarContainer from "@/components/shared/SidebarContainer/SidebarContainer";
+import { getAdminProfile } from "@/features/admin";
 import { Layout } from "antd";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({ children }) {
+  // const [adminProfile, setAdminProfile] = useState(null);
+
   return (
     <Layout hasSider>
       <SidebarContainer></SidebarContainer>
 
       <Layout>
-        <HeaderContainer></HeaderContainer>
+        <HeaderContainer ></HeaderContainer>
 
         <main
           style={{

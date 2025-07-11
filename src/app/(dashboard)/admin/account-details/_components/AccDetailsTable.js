@@ -47,8 +47,8 @@ export default function AccDetailsTable() {
       message.error("Failed to fetch users");
     }
     console.log("data:", res.data);
-
     message.success("User blocked successfully");
+    handleUserProfile();
   };
 
   const handleSearchUser = handleSearch(userData, searchText, [
@@ -68,7 +68,6 @@ export default function AccDetailsTable() {
 
   useEffect(() => {
     handleUserProfile();
-    handleBlockUser();
   }, []);
 
   // ================== Table Columns ================

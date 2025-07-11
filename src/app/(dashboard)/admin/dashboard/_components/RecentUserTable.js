@@ -1,41 +1,76 @@
 "use client";
 
+import { Input, Table } from "antd";
+import { Tooltip } from "antd";
 import { ConfigProvider } from "antd";
-import { Table } from "antd";
-import { UserX } from "lucide-react";
+import { Search } from "lucide-react";
+import userImage from "@/assets/images/user-avatar-lg.png";
 import { Eye } from "lucide-react";
+import { UserX } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Filter } from "lucide-react";
 import Image from "next/image";
-import userImage from "@/assets/images/user-avatar-lg.png";
-import { Tooltip } from "antd";
-import { Tag } from "antd";
-import { useState } from "react";
+import CustomConfirm from "@/components/CustomConfirm/CustomConfirm";
+import { message } from "antd";
 import ProfileModal from "@/components/SharedModals/ProfileModal";
+import { Tag } from "antd";
 import getTagColor from "@/utils/getTagColor";
+import { Icon } from "@iconify/react";
+import { handleSearch } from "@/lib/handleSearch";
+import { deleteUser, getAllUser } from "@/features/user";
+import { formateDate } from "@/utils/formateDate";
 
-// export const resData = dynamic(
-//   () => import(login("fuadhossain@gmail.com", "Fuad@123")),
-//   {
-//     ssr: false,
-//   },
-// );
+const data = async (userData) => {
+  return userData.map((user, inx) => ({
+    key: inx + 1,
+    id: user._id,
+    name: user.fullName,
+    userImg: user.userImage || userImage,
+    email: user.email,
+    contact: `${user.countryCode} ${user.phoneNumber}`,
+    date: formateDate(user.createdAt),
+    gender: user.gender,
+    location: user.location,
+  }));
+};
 
-// Dummy Data
-const data = Array.from({ length: 5 }).map((_, inx) => ({
-  key: inx + 1,
-  name: "Soumaya",
-  userImg: userImage,
-  email: "soumaya@gmail.com",
-  contact: "+1 (234) 567-890",
-  date: "Oct 24 2024, 11:10 PM",
-  accountType: inx % 5 === 0 ? "Admin" : inx % 3 === 0 ? "Hotel Admin" : "User",
-  gender: inx % 2 === 0 ? "Male" : "Female",
-}));
+export default function AccDetailsTable() {
+  const [searchText, setSearchText] = useState("");
+  const [profileModalOpen, setProfileModalOpen] = useState(false);
+  const [userData, setUserData] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
 
-const RecentUserTable = () => {
-  const [showProfileModal, setShowProfileModal] = useState(false);
+  // Block user handler
+  const handleBlockUser = async (data) => {
+    const res = await deleteUser(data);
+    if (!res.success) {
+      message.error("Failed to fetch users");
+    }
+    console.log("data:", res.data);
+    message.success("User blocked successfully");
+    handleUserProfile();
+  };
 
-  // =============== Table columns ===============
+  const handleSearchUser = handleSearch(userData, searchText, [
+    "name",
+    "email",
+    "gender",
+  ]);
+
+  const handleUserProfile = async () => {
+    const res = await getAllUser();
+    if (!res.success) {
+      message.error("Failed to fetch users");
+    }
+    const transform = await data(res.data);
+    setUserData(transform);
+  };
+
+  useEffect(() => {
+    handleUserProfile();
+  }, []);
+
+  // ================== Table Columns ================
   const columns = [
     {
       title: "Serial",
@@ -50,9 +85,9 @@ const RecentUserTable = () => {
           <Image
             src={record.userImg}
             alt="User avatar"
-            width={40}
-            height={40}
-            className="aspect-square rounded-full"
+            width={1200}
+            height={1200}
+            className="aspect-square h-auto w-10 rounded-full"
           />
           <p className="font-medium">{value}</p>
         </div>
@@ -67,7 +102,7 @@ const RecentUserTable = () => {
       dataIndex: "contact",
     },
     {
-      title: "Date",
+      title: "Registered At",
       dataIndex: "date",
     },
     {
@@ -76,18 +111,29 @@ const RecentUserTable = () => {
     },
     {
       title: "Action",
-      render: () => (
+      render: (_, record) => (
         <div className="flex-center-start gap-x-3">
           <Tooltip title="Show Details">
-            <button onClick={() => setShowProfileModal(true)}>
+            <button
+              onClick={() => {
+                setProfileModalOpen(true);
+                setSelectedUser(record);
+              }}
+            >
               <Eye color="#1B70A6" size={22} />
             </button>
           </Tooltip>
 
           <Tooltip title="Block User">
-            <button>
-              <UserX color="#F16365" size={22} />
-            </button>
+            <CustomConfirm
+              title="Block User"
+              description="Are you sure to block this user?"
+              onConfirm={() => handleBlockUser(record.id)}
+            >
+              <button>
+                <UserX color="#F16365" size={22} />
+              </button>
+            </CustomConfirm>
           </Tooltip>
         </div>
       ),
@@ -103,21 +149,18 @@ const RecentUserTable = () => {
         },
       }}
     >
-      <h4 className="text-2xl font-semibold">Recent Registration</h4>
+      <Table
+        style={{ overflowX: "auto" }}
+        columns={columns}
+        dataSource={handleSearchUser}
+        scroll={{ x: "100%" }}
+      ></Table>
 
-      <div className="my-5">
-        <Table
-          style={{ overflowX: "auto" }}
-          columns={columns}
-          dataSource={data}
-          scroll={{ x: "100%" }}
-        ></Table>
-      </div>
-
-      {/* Profile Modal */}
-      <ProfileModal open={showProfileModal} setOpen={setShowProfileModal} />
+      <ProfileModal
+        open={profileModalOpen}
+        setOpen={setProfileModalOpen}
+        user={selectedUser}
+      />
     </ConfigProvider>
   );
-};
-
-export default RecentUserTable;
+}

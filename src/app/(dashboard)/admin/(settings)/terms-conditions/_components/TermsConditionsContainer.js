@@ -13,15 +13,15 @@ export default function TermsConditionsContainer() {
   const submitHandler = async (data) => {
     console.log("Admin about us:", data);
     const res = await updateSettings({
-      url: "/rules/privacy-policy",
-      update: { content: data.termsAndCondition, type: "terms" },
+      content: data.termsAndCondition,
+      type: "terms",
     });
     if (!res.success) {
-      alert("Updating about us failed");
+      alert("Updating term and condition failed");
       return;
     }
-    setTermsAndCondition(res.data.content);
-    console.log("Admin about us profile:", res);
+    console.log("term and condition:", res);
+    await fetchTermsAndCondition();
   };
 
   const fetchTermsAndCondition = async () => {
@@ -31,7 +31,8 @@ export default function TermsConditionsContainer() {
     }
     console.log("fetchTermsAndCondition:", res.data.content);
 
-    setTermsAndCondition(res.data.content);
+    setTermsAndCondition(res.data?.content);
+    console.log("term and condition:", res?.data?.content);
   };
 
   useEffect(() => {

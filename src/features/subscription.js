@@ -57,5 +57,5 @@ export const deleteSubscribe = async (data) => {
       Authorization: `Bearer ${token}`,
     },
   });
-  return res;
+  return res.data;
 };

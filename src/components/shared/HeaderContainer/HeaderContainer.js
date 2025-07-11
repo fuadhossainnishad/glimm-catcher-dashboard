@@ -9,12 +9,14 @@ import { Icon } from "@iconify/react";
 import CustomAvatar from "@/components/CustomAvatar";
 import { cn } from "@/utils/cn";
 import { MainLayoutContext } from "@/context/MainLayoutContext";
-import { useContext } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { LanguageSwitcher } from "@/components/LangSwitcher/lang-switcher";
 import formatUrl from "@/utils/formatUrl";
 import { usePathname } from "next/navigation";
 import { Dropdown } from "antd";
 import { Bell } from "lucide-react";
+import { getAdminProfile } from "@/features/admin";
+import { useAdminProfile } from "@/context/adminProfileContext";
 
 const { Header } = Layout;
 
@@ -56,6 +58,24 @@ export default function HeaderContainer() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } =
     useContext(MainLayoutContext);
   const currentPathname = usePathname();
+  const { adminProfile, setAdminProfile } = useAdminProfile();
+
+  // const [adminImage, setAdminImage] = useState(userAvatar.src);
+  const profileHandler = useCallback(async () => {
+    const res = await getAdminProfile();
+    if (!res.success) {
+      alert("Fetch admin prfile failed");
+      return;
+    }
+    console.log("Admin profile:", res.data);
+    console.log("Admin profile:", res.data?.image?.url);
+
+    setAdminProfile(res.data);
+  }, [setAdminProfile]);
+
+  useEffect(() => {
+    profileHandler();
+  }, [profileHandler]);
 
   return (
     <Header
@@ -106,7 +126,7 @@ export default function HeaderContainer() {
           href={"/admin/profile"}
           className="hover:text-primary-blue group flex items-center gap-x-2 text-black"
         >
-          <CustomAvatar src={userAvatar?.src} size={50} />
+          <CustomAvatar src={adminProfile?.image?.url} size={50} />
         </Link>
       </div>
     </Header>

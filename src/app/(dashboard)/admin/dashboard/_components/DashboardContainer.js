@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react";
 import { Tag } from "antd";
 import { Flex } from "antd";
 import { getTotalEarnings } from "@/features/earning";
+import AccDetailsTable from "../../account-details/_components/AccDetailsTable";
 
 // Dummy data
 const userStats = (dashBoard) => {
@@ -93,7 +94,7 @@ export default function DashboardContainer() {
                       height={16}
                       width={16}
                     />
-                    <span>{stat.growth.value}%</span>
+                    <span>{stat.growth.value}</span>
                   </Flex>
                 </Tag>
 

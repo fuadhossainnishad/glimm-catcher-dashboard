@@ -20,6 +20,7 @@ export default function PrivacyPolicyContainer() {
       return;
     }
     console.log("Admin privacyPolicy profile:", res);
+    await fetchPrivacyPolicy();
   };
 
   const fetchPrivacyPolicy = async () => {

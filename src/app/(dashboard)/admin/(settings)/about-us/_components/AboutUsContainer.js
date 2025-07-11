@@ -20,8 +20,8 @@ export default function AboutUsContainer() {
       alert("Updating about us failed");
       return;
     }
-    setAboutUs(res.data.content);
     console.log("Admin about us profile:", res);
+    await fetchAboutus();
   };
 
   const fetchAboutus = async () => {
@@ -29,9 +29,9 @@ export default function AboutUsContainer() {
     if (!res.success) {
       message.error("Failed to fetch users");
     }
-    console.log("fetchaboutus", res.data.content);
+    console.log("fetchaboutus", res.data?.content);
 
-    setAboutUs(res.data.content);
+    setAboutUs(res.data?.content);
   };
 
   useEffect(() => {

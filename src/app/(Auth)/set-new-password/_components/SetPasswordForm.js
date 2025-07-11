@@ -8,25 +8,27 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function SetPasswordForm() {
+  const router = useRouter();
   const onSubmit = async (data) => {
     console.log("data:", data);
+    const token = sessionStorage.getItem("token");
 
     try {
-      const res = await changePassword(data);
+      const res = await changePassword({ data, token: token });
       console.log("res:", res);
 
       if (res.success) {
-        alert("password not changed");
-        return;
+        alert("password changed");
+        router.push("/login");
       }
-      router.push("/admin/dashboard");
     } catch (error) {
       console.error(error);
       alert(
-        "Otp verify failed: " +
+        "Password reset failed: " +
           (error.response?.data?.message || error.message),
       );
     }

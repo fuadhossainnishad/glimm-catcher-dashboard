@@ -8,21 +8,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 export default function VerifyOtpForm() {
+  const router = useRouter();
   const onSubmit = async (data) => {
-    console.log("data:", data);
+    const email = sessionStorage.getItem("email");
+    console.log("otpVerify:", { otp: data.otp, email: email });
 
     try {
-      const res = await otpVerify(data);
+      const res = await otpVerify({ otp: Number(data.otp), email: email });
       console.log("res:", res);
 
-      if (!res.success) {
-        alert("otp not matched");
-        return;
+      if (res.success) {
+        sessionStorage.setItem("token", res.data?.token);
+        router.push("/set-new-password");
       }
-      router.push("/set-new-password");
     } catch (error) {
       console.error(error);
       alert(

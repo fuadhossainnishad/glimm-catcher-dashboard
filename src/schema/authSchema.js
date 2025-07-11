@@ -18,7 +18,8 @@ export const forgotPassSchema = z.object({
 export const otpSchema = z.object({
   otp: z
     .string({ required_error: "OTP is required" })
-    .min(1, { message: "OTP is required" }),
+    .min(6, { message: "Invalid OTP" })
+    .max(6, { message: "Invalid OTP" }),
 });
 
 export const resetPassSchema = z.object({
