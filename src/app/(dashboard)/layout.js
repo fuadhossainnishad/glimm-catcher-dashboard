@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }) {
       <SidebarContainer></SidebarContainer>
 
       <Layout>
-        <HeaderContainer ></HeaderContainer>
+        <HeaderContainer></HeaderContainer>
 
         <main
           style={{

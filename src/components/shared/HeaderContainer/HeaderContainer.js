@@ -17,6 +17,7 @@ import { Dropdown } from "antd";
 import { Bell } from "lucide-react";
 import { getAdminProfile } from "@/features/admin";
 import { useAdminProfile } from "@/context/adminProfileContext";
+import useAdminSocket from "@/lib/socketio";
 
 const { Header } = Layout;
 
@@ -39,26 +40,34 @@ const notifications = [
   },
 ];
 
-const notificationMenu = notifications.map((notification) => ({
-  key: notification.id,
-  label: (
-    <div className="p-2 text-start">
-      <div className="flex items-center gap-x-3">
-        <Icon icon="typcn:bell" height={26} width={26} color="var(--primary)" />
-        <div className="flex flex-col items-start">
-          <p className="text-sm font-medium">{notification.message}</p>
-          <p className="text-primary">{notification.time}</p>
+const notificationMenu = (notification) => {
+  return notification.map((notification) => ({
+    key: notification.id,
+    label: (
+      <div className="p-2 text-start">
+        <div className="flex items-center gap-x-3">
+          <Icon
+            icon="typcn:bell"
+            height={26}
+            width={26}
+            color="var(--primary)"
+          />
+          <div className="flex flex-col items-start">
+            <p className="text-sm font-medium">{notification.message}</p>
+            <p className="text-primary">{notification.time}</p>
+          </div>
         </div>
       </div>
-    </div>
-  ),
-}));
+    ),
+  }));
+};
 
 export default function HeaderContainer() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } =
     useContext(MainLayoutContext);
   const currentPathname = usePathname();
   const { adminProfile, setAdminProfile } = useAdminProfile();
+  const [notification] = useAdminSocket(!!adminProfile);
 
   // const [adminImage, setAdminImage] = useState(userAvatar.src);
   const profileHandler = useCallback(async () => {
@@ -111,7 +120,7 @@ export default function HeaderContainer() {
         {/* <LanguageSwitcher /> */}
 
         <Dropdown
-          menu={{ items: notificationMenu }}
+          menu={{ items: notificationMenu(notification) }}
           trigger={["click"]}
           className="header-notification-dropdown"
         >
