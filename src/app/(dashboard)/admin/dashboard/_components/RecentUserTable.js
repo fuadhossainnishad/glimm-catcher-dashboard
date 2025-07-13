@@ -17,7 +17,12 @@ import { Tag } from "antd";
 import getTagColor from "@/utils/getTagColor";
 import { Icon } from "@iconify/react";
 import { handleSearch } from "@/lib/handleSearch";
-import { deleteUser, getAllUser } from "@/features/user";
+import {
+  blockUser,
+  deleteUser,
+  getAllUser,
+  unblockUser,
+} from "@/features/user";
 import { formateDate } from "@/utils/formateDate";
 
 const data = async (userData) => {
@@ -31,6 +36,7 @@ const data = async (userData) => {
     date: formateDate(user.createdAt),
     gender: user.gender,
     location: user.location,
+    isActive: user.isActive,
   }));
 };
 
@@ -39,16 +45,28 @@ export default function AccDetailsTable() {
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [userData, setUserData] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [pagination, setPagination] = useState({
+    pageSize: 5,
+    current: 1,
+  });
 
-  // Block user handler
   const handleBlockUser = async (data) => {
-    const res = await deleteUser(data);
+    const res = await blockUser(data);
     if (!res.success) {
       message.error("Failed to fetch users");
     }
     console.log("data:", res.data);
     message.success("User blocked successfully");
-    handleUserProfile();
+    await handleUserProfile(pagination);
+  };
+  const handleUnblockUser = async (data) => {
+    const res = await unblockUser(data);
+    if (!res.success) {
+      message.error("Failed to fetch users");
+    }
+    console.log("data:", res.data);
+    message.success("User unblocked successfully");
+    await handleUserProfile(pagination);
   };
 
   const handleSearchUser = handleSearch(userData, searchText, [
@@ -57,18 +75,32 @@ export default function AccDetailsTable() {
     "gender",
   ]);
 
-  const handleUserProfile = async () => {
-    const res = await getAllUser();
+  const handleUserProfile = async (pagination) => {
+    const res = await getAllUser({
+      page: pagination.current,
+      limit: pagination.pageSize,
+    });
+
     if (!res.success) {
       message.error("Failed to fetch users");
+      return;
     }
+
     const transform = await data(res.data);
     setUserData(transform);
+
+    setPagination((prev) => {
+      if (prev.total === res.meta.total) return prev;
+      return {
+        ...prev,
+        total: res.meta.total,
+      };
+    });
   };
 
   useEffect(() => {
-    handleUserProfile();
-  }, []);
+    handleUserProfile(pagination);
+  }, [pagination]);
 
   // ================== Table Columns ================
   const columns = [
@@ -125,15 +157,27 @@ export default function AccDetailsTable() {
           </Tooltip>
 
           <Tooltip title="Block User">
-            <CustomConfirm
-              title="Block User"
-              description="Are you sure to block this user?"
-              onConfirm={() => handleBlockUser(record.id)}
-            >
-              <button>
-                <UserX color="#F16365" size={22} />
-              </button>
-            </CustomConfirm>
+            {record.isActive === true ? (
+              <CustomConfirm
+                title="Block User"
+                description="Are you sure to block this user?"
+                onConfirm={() => handleBlockUser(record.id)}
+              >
+                <button>
+                  <UserX color="#F16365" size={22} />
+                </button>
+              </CustomConfirm>
+            ) : (
+              <CustomConfirm
+                title="Unblock User"
+                description="Are you sure to unblock this user?"
+                onConfirm={() => handleUnblockUser(record.id)}
+              >
+                <button>
+                  <UserX color="#F16365" size={22} />
+                </button>
+              </CustomConfirm>
+            )}
           </Tooltip>
         </div>
       ),
@@ -151,6 +195,29 @@ export default function AccDetailsTable() {
     >
       <Table
         style={{ overflowX: "auto" }}
+        pagination={{
+          current: pagination.current,
+          pageSize: pagination.pageSize,
+          total: pagination.total,
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "20", "50"],
+          onChange: (page, pageSize) => {
+            setPagination((prev) => {
+              const totalPages = Math.ceil((prev.total || 0) / pageSize);
+              const nextPage = page > totalPages ? 1 : page;
+
+              if (prev.current === nextPage && prev.pageSize === pageSize)
+                return prev;
+
+              return {
+                ...prev,
+                current: page,
+                pageSize: pageSize,
+              };
+            });
+            handleUserProfile(pagination);
+          },
+        }}
         columns={columns}
         dataSource={handleSearchUser}
         scroll={{ x: "100%" }}

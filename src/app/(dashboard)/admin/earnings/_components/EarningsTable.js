@@ -29,11 +29,18 @@ export default function EarningsTable() {
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectEarnings, setSelectEarnings] = useState(null);
   const [earningStats, setEarningStats] = useState({});
-
-  const handlEarningData = async () => {
-    const allPayment = await getAllPayment();
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    current: 1,
+  });
+  const handlEarningData = async (pagination) => {
+    const allPayment = await getAllPayment({
+      page: pagination.current,
+      limit: pagination.pageSize,
+    });
     const totalEarning = await getTotalEarnings();
     const todayEarning = await getTodaysEarnings();
+
     if (!allPayment.success || !totalEarning.success || !todayEarning.success) {
       message.error("Failed to fetch earnings");
     }
@@ -65,8 +72,8 @@ export default function EarningsTable() {
   };
 
   useEffect(() => {
-    handlEarningData();
-  }, []);
+    handlEarningData(pagination);
+  }, [pagination]);
 
   // =============== Table Data =================
   const data = earnings.map((earning, inx) => ({
@@ -260,7 +267,26 @@ export default function EarningsTable() {
           scroll={{ x: "100%" }}
           className="notranslate"
           pagination={{
-            pageSize: 15,
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "10", "20", "50"],
+            onChange: (page, pageSize) => {
+              setPagination((prev) => {
+                const totalPages = Math.ceil((prev.total || 0) / pageSize);
+                const nextPage = page > totalPages ? 1 : page;
+
+                if (prev.current === nextPage && prev.pageSize === pageSize)
+                  return prev;
+
+                return {
+                  ...prev,
+                  current: page,
+                  pageSize: pageSize,
+                };
+              });
+            },
           }}
         ></Table>
         <EarningModal

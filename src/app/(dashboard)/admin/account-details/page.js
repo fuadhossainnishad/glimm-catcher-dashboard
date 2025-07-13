@@ -1,3 +1,4 @@
+
 import AccDetailsTable from "./_components/AccDetailsTable";
 
 export const metadata = {
