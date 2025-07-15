@@ -28,11 +28,13 @@ export default function EarningsTable() {
   const [earnings, setEarnings] = useState([]);
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [selectEarnings, setSelectEarnings] = useState(null);
+  const [selectedMonth, setSelectedMonth] = useState(null);
   const [earningStats, setEarningStats] = useState({});
   const [pagination, setPagination] = useState({
     pageSize: 10,
     current: 1,
   });
+
   const handlEarningData = async (pagination) => {
     const allPayment = await getAllPayment({
       page: pagination.current,
