@@ -95,7 +95,7 @@ export default function AccDetailsTable() {
 
   useEffect(() => {
     handleUserProfile(pagination);
-  }, [pagination, userData]);
+  }, [pagination]);
 
   // ================== Table Columns ================
   const columns = [
