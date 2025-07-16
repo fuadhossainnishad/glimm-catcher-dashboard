@@ -51,15 +51,18 @@ export const getSpecificEarningsOverview = async (query) => {
   return res.data;
 };
 
-export const getAllPayment = async ({ page, limit }) => {
+export const getAllPayment = async ({ page, limit, month, year }) => {
   const token = sessionStorage.getItem("token");
-  const res = await axiosInstance.get(
-    `/payment/all?page=${page}&limit=${limit}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  const res = await axiosInstance.get(`/payment/all`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
     },
-  );
+    params: {
+      page,
+      limit,
+      ...(month && { month }),
+      ...(year && { year }),
+    },
+  });
   return res.data;
 };

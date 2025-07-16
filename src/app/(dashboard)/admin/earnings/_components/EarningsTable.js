@@ -35,10 +35,14 @@ export default function EarningsTable() {
     current: 1,
   });
 
-  const handlEarningData = async (pagination) => {
+  const handlEarningData = async (pagination, dateFilter) => {
     const allPayment = await getAllPayment({
       page: pagination.current,
       limit: pagination.pageSize,
+      ...(dateFilter && {
+        month: dateFilter.month,
+        year: dateFilter.year,
+      }),
     });
     const totalEarning = await getTotalEarnings();
     const todayEarning = await getTodaysEarnings();
@@ -74,8 +78,8 @@ export default function EarningsTable() {
   };
 
   useEffect(() => {
-    handlEarningData(pagination);
-  }, [pagination]);
+    handlEarningData(pagination, selectedMonth);
+  }, [pagination, selectedMonth]);
 
   // =============== Table Data =================
   const data = earnings.map((earning, inx) => ({
@@ -256,6 +260,14 @@ export default function EarningsTable() {
               picker="month"
               placeholder="Filter Month"
               style={{ height: "65%" }}
+              onChange={(date) => {
+                if (!date) {
+                  setSelectedMonth(null);
+                }
+                const month = date.month() + 1;
+                const year = date.year();
+                setSelectedMonth({ month, year });
+              }}
             />
           </Flex>
         </Col>
