@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { getAdminProfile, updateAdminProfile } from "@/features/admin";
 import { useAdminProfile } from "@/context/adminProfileContext";
 import { message } from "antd";
+import toast from "react-hot-toast";
 
 export default function ProfileContainer() {
   const [profile, setProfile] = useState({});
@@ -20,7 +21,7 @@ export default function ProfileContainer() {
   const profileHandler = useCallback(async () => {
     const res = await getAdminProfile();
     if (!res.success) {
-      alert("Fetch admin prfile failed");
+      toast.error("Fetching admin prfile failed");
       return;
     }
     console.log("Admin profile:", res.data);
@@ -29,6 +30,7 @@ export default function ProfileContainer() {
     setProfile(res.data);
     setAdminProfile(res.data);
     setPreviewImage(null);
+    message.success("Profile fetched successfully");
   }, [setAdminProfile]);
 
   useEffect(() => {
@@ -51,10 +53,10 @@ export default function ProfileContainer() {
 
     const res = await updateAdminProfile(formData);
     if (!res.success) {
-      message.error("Profile image update failed");
+      toast.error("Profile image updating failed");
       return;
     }
-    message.success("Profile image updated");
+    toast.success("Profile image updated");
     profileHandler();
   };
 

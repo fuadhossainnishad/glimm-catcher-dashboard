@@ -21,6 +21,7 @@ import {
   getTotalEarnings,
 } from "@/features/earning";
 import EarningModal from "./EarningModal";
+import toast from "react-hot-toast";
 
 export default function EarningsTable() {
   const [showFormattedTnxId, setShowFormattedTnxId] = useState(true);
@@ -48,7 +49,7 @@ export default function EarningsTable() {
     const todayEarning = await getTodaysEarnings();
 
     if (!allPayment.success || !totalEarning.success || !todayEarning.success) {
-      message.error("Failed to fetch earnings");
+      toast.error("Failed to fetch earnings");
     }
     console.log("earning:", {
       todayEarning: todayEarning.data,
@@ -75,6 +76,7 @@ export default function EarningsTable() {
       totalEarning: totalEarning.data,
     });
     setEarnings(fallback);
+    toast.success("Earnings fetched successfully");
   };
 
   useEffect(() => {

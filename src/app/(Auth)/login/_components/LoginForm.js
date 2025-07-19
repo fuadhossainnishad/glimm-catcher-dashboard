@@ -11,6 +11,8 @@ import logo from "@/assets/logos/logo.svg";
 import Image from "next/image";
 import { login } from "@/features/auth";
 
+import toast from "react-hot-toast";
+
 export default function LoginForm() {
   const router = useRouter();
 
@@ -22,16 +24,18 @@ export default function LoginForm() {
       console.log("loginRes:", loginRes.data.admin);
 
       if (!loginRes.success) {
-        alert("Login failed");
+        toast.error("Login failed. Please check your credentials.");
         return;
       }
+
       console.log("loginRes:", loginRes.data.token);
       sessionStorage.setItem("token", loginRes.data.token);
       router.push("/admin/dashboard");
+      toast.success("Login successful! Redirecting...");
     } catch (error) {
       console.error(error);
-      alert(
-        "Login failed: " + (error.response?.data?.message || error.message),
+      toast.error(
+        error?.response?.data?.message || "Something went wrong during login.",
       );
     }
   };

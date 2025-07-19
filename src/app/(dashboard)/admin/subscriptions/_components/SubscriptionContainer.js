@@ -11,6 +11,7 @@ import {
   getSubscribe,
 } from "@/features/subscription";
 import { message } from "antd";
+import toast from "react-hot-toast";
 
 export default function SubscriptionContainer() {
   const [showAddSubscriptionModal, setShowAddSubscriptionModal] =
@@ -25,14 +26,15 @@ export default function SubscriptionContainer() {
       console.log("subscriptions:", res.data);
 
       if (!res.success) {
-        alert("No subscription created yet");
+        toast.error("No subscription created yet");
         return;
       }
       console.log("subscriptions:", res.data);
       setSubcsription(res.data);
+      toast.success("Subscription plans fetched successfully");
     } catch (error) {
       console.error(error);
-      alert(
+      toast.error(
         "Get subscription extract failed: " +
           (error.response?.data?.message || error.message),
       );
@@ -42,9 +44,9 @@ export default function SubscriptionContainer() {
   const handleDeleteSubscription = async (data) => {
     const res = await deleteSubscribe(data);
     if (!res?.data?.success) {
-      message.error("Failed to fetch users");
+      toast.error("Failed to fetch subscriptions plans");
     }
-    message.success("User blocked successfully");
+    toast.success("Subscription plan deleted successfully");
     await handleSubscription();
   };
 

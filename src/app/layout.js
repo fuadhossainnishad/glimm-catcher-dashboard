@@ -4,6 +4,7 @@ import Providers from "@/lib/Providers";
 import Script from "next/script";
 import "@splidejs/react-splide/css";
 import { AdminProfileProvider } from "@/context/adminProfileContext";
+import { Toaster } from "react-hot-toast";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -65,6 +66,7 @@ export default function RootLayout({ children }) {
         <Providers>
           <AdminProfileProvider>{children}</AdminProfileProvider>
         </Providers>
+        <Toaster position="top-right" />
       </body>
     </html>
   );

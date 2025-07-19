@@ -19,6 +19,7 @@ import { Icon } from "@iconify/react";
 import { handleSearch } from "@/lib/handleSearch";
 import { blockUser, getAllUser, unblockUser } from "@/features/user";
 import { formateDate } from "@/utils/formateDate";
+import toast from "react-hot-toast";
 
 const data = async (userData) => {
   return userData.map((user, inx) => ({
@@ -48,19 +49,19 @@ export default function AccDetailsTable() {
   const handleBlockUser = async (data) => {
     const res = await blockUser(data);
     if (!res.success) {
-      message.error("Failed to fetch users");
+      toast.error("Failed to fetch accounts");
     }
     console.log("data:", res.data);
-    message.success("User blocked successfully");
+    toast.success("User blocked successfully");
     await handleUserProfile(pagination);
   };
   const handleUnblockUser = async (data) => {
     const res = await unblockUser(data);
     if (!res.success) {
-      message.error("Failed to fetch users");
+      toast.error("Failed to fetch accounts");
     }
     console.log("data:", res.data);
-    message.success("User unblocked successfully");
+    toast.success("User unblocked successfully");
     await handleUserProfile(pagination);
   };
 
@@ -77,12 +78,13 @@ export default function AccDetailsTable() {
     });
 
     if (!res.success) {
-      message.error("Failed to fetch users");
+      toast.error("Failed to fetch user accounts");
       return;
     }
 
     const transform = await data(res.data);
     setUserData(transform);
+    toast.success("Fetched user accounts successfully");
 
     setPagination((prev) => {
       if (prev.total === res.meta.total) return prev;

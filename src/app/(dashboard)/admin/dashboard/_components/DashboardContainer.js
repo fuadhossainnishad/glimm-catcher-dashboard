@@ -9,6 +9,7 @@ import { Tag } from "antd";
 import { Flex } from "antd";
 import { getTotalEarnings } from "@/features/earning";
 import AccDetailsTable from "../../account-details/_components/AccDetailsTable";
+import toast from "react-hot-toast";
 
 // Dummy data
 const userStats = (dashBoard) => {
@@ -39,10 +40,16 @@ export default function DashboardContainer() {
     const totalUser = await getTotalUser();
     const totalEarnings = await getTotalEarnings();
     if (!totalUser.success) {
-      alert("No user exist yet");
+      toast.error("No user exist yet");
+      return;
+    }
+    if (!totalEarnings.success) {
+      toast.error("No earning occured yet");
       return;
     }
     console.log("totalUser:", totalUser.data);
+    toast.success("Dashboard data fetched successfully");
+
     setDashboad({
       totalUser: totalUser.data,
       totalEarnings: totalEarnings.data,

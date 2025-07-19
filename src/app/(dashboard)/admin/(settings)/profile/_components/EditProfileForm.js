@@ -6,6 +6,7 @@ import { updateAdminProfile } from "@/features/admin";
 import { editProfileSchema } from "@/schema/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
+import toast from "react-hot-toast";
 
 export default function EditProfileForm({ profile, refetchProfile }) {
   const handleSubmit = async (data) => {
@@ -19,11 +20,12 @@ export default function EditProfileForm({ profile, refetchProfile }) {
     }
     const res = await updateAdminProfile(formData);
     if (!res.success) {
-      alert("Profile updated failed");
+      toast.error("Profile updating failed");
       return;
     }
     console.log(res.data);
     refetchProfile();
+    toast.success("Profile updated successfully");
   };
 
   return (

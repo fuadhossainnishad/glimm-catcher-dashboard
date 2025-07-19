@@ -8,6 +8,7 @@ import { createSubscriptionSchema } from "@/schema/subscriptionSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Modal } from "antd";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function EditSubscriptionModal({
   open,
@@ -23,11 +24,11 @@ export default function EditSubscriptionModal({
     console.log("sunscription:", res.data);
 
     if (!res.data.success) {
-      alert("Subscription not updated yet");
+      toast.error("Subscription not updated yet");
       return;
     }
     subscriptionDeatils = { _id: subscriptionDeatils._id, ...data };
-    alert("Subscription plan updated successfully");
+    toast.error("Subscription plan updated successfully");
     console.log("sunscription:", res.data);
     onUpdated?.();
     setOpen(false);

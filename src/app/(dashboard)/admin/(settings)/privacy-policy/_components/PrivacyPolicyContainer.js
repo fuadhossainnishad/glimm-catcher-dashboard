@@ -6,6 +6,7 @@ import { getRules, updateSettings } from "@/features/settings";
 import { Button } from "antd";
 import { Edit } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function PrivacyPolicyContainer() {
   const [privacyPolicy, setPrivacyPolicy] = useState(null);
@@ -16,17 +17,18 @@ export default function PrivacyPolicyContainer() {
       type: "privacy",
     });
     if (!res.success) {
-      alert("Updating privacy policy failed");
+      toast.error("Updating privacy policy failed");
       return;
     }
     console.log("Admin privacyPolicy profile:", res);
     await fetchPrivacyPolicy();
+    toast.success("Privacy policy updated successfully");
   };
 
   const fetchPrivacyPolicy = async () => {
     const res = await getRules({ url: "/rules/privacy-policy" });
     if (!res.success) {
-      message.error("Failed to fetch users");
+      toast.error("Failed to fetch privacy policy content");
     }
     console.log("fetchTermsAndCondition:", res.data.content);
 

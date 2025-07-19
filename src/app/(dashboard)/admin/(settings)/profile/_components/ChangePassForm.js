@@ -6,6 +6,7 @@ import { changePasswordSchema } from "@/schema/profileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "antd";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function ChangePassForm({ profile, refetchProfile }) {
   const [password, setPassword] = useState({});
@@ -23,11 +24,11 @@ export default function ChangePassForm({ profile, refetchProfile }) {
     });
 
     if (!res.success) {
-      alert("Changing admin password failed");
+      toast.error("Changing admin password failed");
       return;
     }
 
-    alert("Password updated successfully");
+    toast.success("Password updated successfully");
     refetchProfile();
   };
   return (

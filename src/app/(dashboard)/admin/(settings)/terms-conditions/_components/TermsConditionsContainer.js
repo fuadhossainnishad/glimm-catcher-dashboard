@@ -6,6 +6,7 @@ import { getRules, updateSettings } from "@/features/settings";
 import { Button } from "antd";
 import { Edit } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function TermsConditionsContainer() {
   const [termsAndCondition, setTermsAndCondition] = useState(null);
@@ -17,17 +18,18 @@ export default function TermsConditionsContainer() {
       type: "terms",
     });
     if (!res.success) {
-      alert("Updating term and condition failed");
+      toast.error("Updating term and condition failed");
       return;
     }
     console.log("term and condition:", res);
     await fetchTermsAndCondition();
+    toast.success("Terms and conditions updated successfully");
   };
 
   const fetchTermsAndCondition = async () => {
     const res = await getRules({ url: "/rules/terms-and-condition" });
     if (!res.success) {
-      message.error("Failed to fetch users");
+      toast.error("Failed to fetch Terms & Conditions content");
     }
     console.log("fetchTermsAndCondition:", res.data.content);
 

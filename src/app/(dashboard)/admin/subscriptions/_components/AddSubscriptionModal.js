@@ -15,10 +15,10 @@ export default function AddSubscriptionModal({ open, setOpen, onCreated }) {
     console.log("sunscription:", res.data);
 
     if (!res.data.success) {
-      alert("No subscription created yet");
+      toast.error("No subscription created yet");
       return;
     }
-    alert("Subscription plan created successfully");
+    toast.success("New subscription plan created successfully");
     console.log("sunscription:", res.data);
     onCreated?.();
     setOpen(false);

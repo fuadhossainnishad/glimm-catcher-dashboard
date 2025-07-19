@@ -16,9 +16,9 @@ const { Search } = Input;
 
 const MessageContainer = () => {
   return (
-    <div className="lg:mx-auto ">
+    <div className="lg:mx-auto">
       <div
-        className="relative z-10 flex flex-col !px-8 py-6 lg:flex-row bg-white shadow-lg rounded-xl"
+        className="relative z-10 flex flex-col rounded-xl bg-white !px-8 py-6 shadow-lg lg:flex-row"
         style={{
           borderTop: "8px solid var(--primary)",
           borderTopLeftRadius: "1rem",

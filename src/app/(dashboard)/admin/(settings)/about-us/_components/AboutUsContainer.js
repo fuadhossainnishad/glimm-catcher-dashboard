@@ -6,6 +6,7 @@ import { getRules, updateSettings } from "@/features/settings";
 import { Button } from "antd";
 import { Edit } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AboutUsContainer() {
   const [aboutUs, setAboutUs] = useState(null);
@@ -17,17 +18,18 @@ export default function AboutUsContainer() {
       type: "about",
     });
     if (!res.success) {
-      alert("Updating about us failed");
+      toast.error("Updating about us failed");
       return;
     }
     console.log("Admin about us profile:", res);
     await fetchAboutus();
+    toast.success("About us updated successfully");
   };
 
   const fetchAboutus = async () => {
     const res = await getRules({ url: "/rules/about" });
     if (!res.success) {
-      message.error("Failed to fetch users");
+      toast.error("Failed to fetch about us content");
     }
     console.log("fetchaboutus", res.data?.content);
 
