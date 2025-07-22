@@ -66,7 +66,6 @@ export default function RootLayout({ children }) {
         <Providers>
           <AdminProfileProvider>{children}</AdminProfileProvider>
         </Providers>
-        <Toaster position="top-right" />
       </body>
     </html>
   );
