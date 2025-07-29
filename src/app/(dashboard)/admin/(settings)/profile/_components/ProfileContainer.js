@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import adminImg from "@/assets/images/user-avatar-md.png";
 import { ImagePlus } from "lucide-react";
 import { ConfigProvider } from "antd";
 import ChangePassForm from "./ChangePassForm";
@@ -84,7 +83,7 @@ export default function ProfileContainer() {
         <section className="flex-center gap-x-3">
           <div className="relative w-max">
             <Image
-              src={previewImage || profile.image?.url || adminImg}
+              src={previewImage || profile.image?.url }
               alt="Admin avatar"
               width={1200}
               height={1200}

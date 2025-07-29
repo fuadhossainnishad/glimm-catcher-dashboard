@@ -42,7 +42,7 @@ const notifications = [
 
 const notificationMenu = (notification) => {
   return notification.map((notification) => ({
-    key: notification.id,
+    key: notification._id,
     label: (
       <div className="p-2 text-start">
         <div className="flex items-center gap-x-3">
@@ -54,7 +54,9 @@ const notificationMenu = (notification) => {
           />
           <div className="flex flex-col items-start">
             <p className="text-sm font-medium">{notification.message}</p>
-            <p className="text-primary">{notification.time}</p>
+            <p className="text-primary">
+              {new Date(notification.timestamp).toLocaleString()}
+            </p>
           </div>
         </div>
       </div>

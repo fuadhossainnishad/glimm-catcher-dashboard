@@ -9,7 +9,7 @@ export default function NotificationCard({ notification }) {
         alt="user avatar"
         height={1200}
         width={1200}
-        className="w-[75px] h-auto aspect-square rounded-full"
+        className="aspect-square h-auto w-[75px] rounded-full"
       />
 
       <p className="text-xl">
@@ -19,7 +19,7 @@ export default function NotificationCard({ notification }) {
         {notification.message}
       </p>
 
-      <div className="flex-center-between w-max whitespace-nowrap gap-x-6 mb-7 ml-10">
+      <div className="flex-center-between mb-7 ml-10 w-max gap-x-6 whitespace-nowrap">
         <p className="text-dark-gray">{notification.date}</p>
 
         <button>
